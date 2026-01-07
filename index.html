@@ -137,8 +137,10 @@
             background: white;
             border-radius: 24px;
             padding: 32px;
-            max-width: 420px;
+            max-width: 480px;
             width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 20px 60px rgba(240, 98, 146, 0.3);
             animation: slideUp 0.3s ease;
             position: relative;
@@ -265,6 +267,91 @@
         }
         .setting-option.active .setting-option-title {
             color: var(--primary-dark);
+        }
+
+        /* Settings セクション */
+        .settings-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .settings-section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        .settings-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #8a6d74;
+            margin-bottom: 12px;
+        }
+
+        /* APIキー入力 */
+        .api-key-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .api-key-input {
+            flex: 1;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: #faf7f8;
+            color: var(--text-color);
+            font-size: 14px;
+            font-family: monospace;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .api-key-input:focus {
+            border-color: var(--primary-soft);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(255, 133, 161, 0.1);
+        }
+        .api-key-toggle {
+            width: 44px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background: #faf7f8;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .api-key-toggle:hover {
+            background: #fff5f7;
+            border-color: var(--primary-soft);
+        }
+        .api-key-save-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ff85a1 0%, #f06292 100%);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            margin-bottom: 10px;
+        }
+        .api-key-save-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(240, 98, 146, 0.3);
+        }
+        .api-key-hint {
+            font-size: 12px;
+            color: #a88;
+            text-align: center;
+        }
+        .api-key-hint a {
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+        .api-key-hint a:hover {
+            text-decoration: underline;
         }
 
         /* ========== Contact モーダル ========== */
@@ -673,6 +760,10 @@
         <ul class="version-list">
             <li class="version-item">
                 <div class="version-date">2025.01.07</div>
+                <div class="version-desc">v1.2 アップデート<br>・用途変更：ラフデザイン改善指示書の生成<br>・APIキー入力機能追加<br>・カラーパレット追加（16色）<br>・デザインパターン拡充<br>・プログレスバーUI改善</div>
+            </li>
+            <li class="version-item">
+                <div class="version-date">2025.01.07</div>
                 <div class="version-desc">v1.1 アップデート<br>・制作物サイズ選択追加<br>・向き選択（タテ/ヨコ）追加<br>・テキストオプション追加</div>
             </li>
             <li class="version-item">
@@ -691,28 +782,46 @@
 <div class="modal-overlay" id="settingsModal" onclick="closeModalOnOverlay(event)">
     <div class="modal-content">
         <button class="modal-close" onclick="closeModal('settingsModal')">×</button>
-        <h2 class="modal-title"><span class="modal-title-icon">⚙️</span>Output Level</h2>
-        <div class="setting-options">
-            <div class="setting-option" data-level="soft" onclick="selectLevel('soft')">
-                <div class="setting-option-header">
-                    <span class="setting-option-title">Soft</span>
-                    <span class="setting-option-badge">簡易</span>
-                </div>
-                <div class="setting-option-desc">大まかな指示書を生成します。ポイントを絞ったシンプルな仕様書向け。</div>
+        <h2 class="modal-title"><span class="modal-title-icon">⚙️</span>Settings</h2>
+        
+        <!-- APIキー設定 -->
+        <div class="settings-section">
+            <div class="settings-section-title">API Key</div>
+            <div class="api-key-input-group">
+                <input type="password" class="api-key-input" id="apiKeyInput" placeholder="Gemini APIキーを入力">
+                <button class="api-key-toggle" onclick="toggleApiKeyVisibility()">👁</button>
             </div>
-            <div class="setting-option active" data-level="normal" onclick="selectLevel('normal')">
-                <div class="setting-option-header">
-                    <span class="setting-option-title">Normal</span>
-                    <span class="setting-option-badge">標準</span>
-                </div>
-                <div class="setting-option-desc">標準的な指示書を生成します。通常のデザイン依頼に最適。</div>
+            <button class="api-key-save-btn" onclick="saveApiKey()">保存</button>
+            <div class="api-key-hint">
+                <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>でAPIキーを取得できます
             </div>
-            <div class="setting-option" data-level="hard" onclick="selectLevel('hard')">
-                <div class="setting-option-header">
-                    <span class="setting-option-title">Hard</span>
-                    <span class="setting-option-badge">詳細</span>
+        </div>
+
+        <!-- 出力レベル設定 -->
+        <div class="settings-section">
+            <div class="settings-section-title">Output Level</div>
+            <div class="setting-options">
+                <div class="setting-option" data-level="soft" onclick="selectLevel('soft')">
+                    <div class="setting-option-header">
+                        <span class="setting-option-title">Soft</span>
+                        <span class="setting-option-badge">簡易</span>
+                    </div>
+                    <div class="setting-option-desc">大まかな指示書を生成します。ポイントを絞ったシンプルな仕様書向け。</div>
                 </div>
-                <div class="setting-option-desc">細やかな指示書を生成します。複雑な案件や新規デザイナー向け。</div>
+                <div class="setting-option active" data-level="normal" onclick="selectLevel('normal')">
+                    <div class="setting-option-header">
+                        <span class="setting-option-title">Normal</span>
+                        <span class="setting-option-badge">標準</span>
+                    </div>
+                    <div class="setting-option-desc">標準的な指示書を生成します。通常のデザイン依頼に最適。</div>
+                </div>
+                <div class="setting-option" data-level="hard" onclick="selectLevel('hard')">
+                    <div class="setting-option-header">
+                        <span class="setting-option-title">Hard</span>
+                        <span class="setting-option-badge">詳細</span>
+                    </div>
+                    <div class="setting-option-desc">細やかな指示書を生成します。複雑な案件や新規デザイナー向け。</div>
+                </div>
             </div>
         </div>
     </div>
@@ -899,7 +1008,8 @@
 </div>
 
 <script>
-    const API_KEY = 'AIzaSyAtAv0IQ3E3BHexV7yGTHzS0PYJeOAnQq8';
+    // APIキー（ローカルストレージから取得）
+    let API_KEY = localStorage.getItem('mico_api_key') || '';
 
     // 出力レベル（デフォルト: normal）
     let outputLevel = 'normal';
@@ -917,6 +1027,25 @@
             document.getElementById('contactForm').style.display = 'block';
             document.getElementById('successMessage').classList.remove('show');
         }
+        
+        // Settingsモーダルを開くときにAPIキーを表示
+        if (modalId === 'settingsModal') {
+            document.getElementById('apiKeyInput').value = API_KEY;
+        }
+    }
+
+    // APIキーの表示/非表示切り替え
+    function toggleApiKeyVisibility() {
+        const input = document.getElementById('apiKeyInput');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // APIキーの保存
+    function saveApiKey() {
+        const input = document.getElementById('apiKeyInput');
+        API_KEY = input.value.trim();
+        localStorage.setItem('mico_api_key', API_KEY);
+        alert('APIキーを保存しました ✨');
     }
 
     function closeModal(modalId) {
@@ -1064,8 +1193,9 @@
         const wrap = document.getElementById('progressWrap');
         const bar = document.getElementById('progressBar');
 
-        if(!API_KEY || API_KEY.includes('YOUR_GEMINI')) { 
-            alert('APIキーを設定してください。'); 
+        if(!API_KEY) { 
+            alert('APIキーが設定されていません。\nSettingsからGemini APIキーを入力してください。');
+            openModal('settingsModal');
             return; 
         }
 
