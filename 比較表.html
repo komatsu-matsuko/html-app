@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROFIT WARS | Safari vs RAFTEL</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Ops+One&family=Noto+Sans+JP:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans JP"', 'sans-serif'],
+                        display: ['"Anton"', 'sans-serif'],
+                        gaming: ['"Black Ops One"', 'cursive'],
+                        tech: ['"Orbitron"', 'sans-serif'],
+                    },
+                    colors: {
+                        safari: '#facc15', // Yellow
+                        raftel: '#00f0ff', // Cyan (More neon)
+                        dark: '#050505',
+                        panel: 'rgba(17, 17, 17, 0.9)',
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #222 1px, transparent 1px), linear-gradient(to bottom, #222 1px, transparent 1px)",
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+            font-size: 18px; /* 全体のベース文字サイズアップ */
+        }
+
+        /* ゲーム風背景 */
+        .bg-cyber {
+            background: 
+                radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 80%),
+                linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+        }
+
+        /* ネオンテキスト */
+        .neon-text-safari {
+            text-shadow: 0 0 5px #facc15, 0 0 10px #facc15, 0 0 20px #facc15;
+        }
+        .neon-text-raftel {
+            text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+        }
+        .text-shadow-safari { text-shadow: 2px 2px 0px rgba(250, 204, 21, 0.3); }
+        .text-shadow-raftel { text-shadow: 2px 2px 0px rgba(0, 240, 255, 0.3); }
+
+        /* スクロールバー */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #facc15; 
+        }
+
+        .panel-border {
+            position: relative;
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+        /* テック風コーナー装飾 */
+        .corner-deco::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 20px; height: 20px;
+            border-top: 4px solid rgba(255,255,255,0.8);
+            border-left: 4px solid rgba(255,255,255,0.8);
+            z-index: 10;
+        }
+        .corner-deco::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 20px; height: 20px;
+            border-bottom: 4px solid rgba(255,255,255,0.8);
+            border-right: 4px solid rgba(255,255,255,0.8);
+            z-index: 10;
+        }
+
+        /* 斜めカット */
+        .clip-diagonal {
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+        
+        .glitch-effect {
+            position: relative;
+        }
+        .glitch-effect::before,
+        .glitch-effect::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #050505;
+        }
+        .glitch-effect::before {
+            left: 2px;
+            text-shadow: -1px 0 #facc15;
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+        .glitch-effect::after {
+            left: -2px;
+            text-shadow: -1px 0 #00f0ff;
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(14px, 9999px, 122px, 0); }
+            100% { clip: rect(63px, 9999px, 86px, 0); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(69px, 9999px, 86px, 0); }
+            100% { clip: rect(3px, 9999px, 12px, 0); }
+        }
+    </style>
+</head>
+<body class="bg-cyber">
+    <div id="root"></div>
+    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+        const { 
+            BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+            LineChart, Line, ScatterChart, Scatter, AreaChart, Area, ZAxis, ReferenceLine, LabelList
+        } = Recharts;
+
+        // --- アイコン ---
+        const Icon = ({ path, size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {path}
+            </svg>
+        );
+        const icons = {
+            trophy: <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z" />,
+            users: <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />,
+            trend: <path d="M23 6l-9.5 9.5-5-5L1 18" />,
+            search: <path d="M11 11m-8 0a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M21 21l-4.35-4.35" />,
+            sword: <path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2" />, 
+            crown: <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+        };
+
+        // --- データ定義 ---
+        // ラフテル (72名, 気保削除, 貞保に統一, 石出件数修正)
+        const RAFTEL_DATA = [
+            { id: 101, name: "藤二", q1: 872.8, q2: 1169.6, q3: 603.2, q4: 477.0, total: 3122.6, deals: 1339 },
+            { id: 102, name: "久保田", q1: 1588.7, q2: 1334.7, q3: 2626.0, q4: 2694.2, total: 8241.7, deals: 2873 },
+            { id: 103, name: "中谷", q1: 875.6, q2: 1033.3, q3: 593.5, q4: 988.3, total: 3490.8, deals: 1680 },
+            { id: 104, name: "塚本", q1: 760.9, q2: 2015.7, q3: 1710.5, q4: 1908.4, total: 6393.5, deals: 1742 },
+            { id: 105, name: "小玉", q1: 673.1, q2: 873.0, q3: 954.2, q4: 2023.6, total: 4523.9, deals: 2589 },
+            { id: 106, name: "山本", q1: 514.0, q2: 807.1, q3: 290.8, q4: 1410.5, total: 3022.4, deals: 2560 },
+            { id: 107, name: "橋詰", q1: 1131.8, q2: 897.6, q3: 1010.2, q4: 1620.2, total: 4659.8, deals: 2581 },
+            { id: 108, name: "長沼", q1: 677.0, q2: 2024.0, q3: 881.2, q4: 4012.3, total: 7594.4, deals: 1410 },
+            { id: 109, name: "今井", q1: -15.5, q2: 187.3, q3: 350.0, q4: 1003.2, total: 1525.0, deals: 1315 },
+            { id: 110, name: "畠山", q1: 0.0, q2: -10.4, q3: 484.4, q4: 1348.0, total: 1801.9, deals: 1071 },
+            { id: 111, name: "岩崎", q1: 0.0, q2: 0.0, q3: 0.0, q4: -11.0, total: -11.0, deals: 0 },
+            { id: 112, name: "井野根", q1: 1948.9, q2: 1627.4, q3: 833.5, q4: 1289.9, total: 5897.7, deals: 2083 },
+            { id: 113, name: "藤二（二）", q1: 929.2, q2: 688.3, q3: 1785.5, q4: 1983.2, total: 5386.1, deals: 1248 },
+            { id: 114, name: "佐野", q1: 832.7, q2: 1921.4, q3: 1648.3, q4: 1654.0, total: 6104.3, deals: 1941 },
+            { id: 115, name: "山中", q1: 740.0, q2: 831.9, q3: 1245.3, q4: 1852.6, total: 4669.9, deals: 1250 },
+            { id: 116, name: "川村", q1: 547.7, q2: 1065.5, q3: 822.2, q4: 2151.4, total: 4586.8, deals: 2351 },
+            { id: 117, name: "篠原", q1: 0.0, q2: 193.4, q3: 247.2, q4: 1057.9, total: 1498.6, deals: 775 },
+            { id: 118, name: "花田", q1: 0.0, q2: 0.0, q3: 206.4, q4: 448.0, total: 654.4, deals: 0 },
+            { id: 119, name: "山田", q1: 0.0, q2: 0.0, q3: 301.4, q4: 616.3, total: 917.6, deals: 0 },
+            { id: 120, name: "福田", q1: 1618.3, q2: 1258.7, q3: 984.2, q4: 2230.9, total: 6070.0, deals: 2204 },
+            { id: 121, name: "宮崎", q1: 481.4, q2: 819.1, q3: 570.0, q4: 1102.2, total: 2972.7, deals: 2523 },
+            { id: 122, name: "習一", q1: 618.8, q2: 1307.7, q3: 588.2, q4: 1150.2, total: 3684.9, deals: 1952 },
+            { id: 123, name: "亮介", q1: 598.5, q2: 889.8, q3: 664.7, q4: 1404.7, total: 3555.7, deals: 1436 },
+            { id: 124, name: "横山", q1: 732.8, q2: 1136.2, q3: 1420.6, q4: 2148.5, total: 5438.2, deals: 1596 },
+            { id: 125, name: "皆藤", q1: 774.4, q2: 1051.3, q3: 973.1, q4: 2087.5, total: 4886.3, deals: 2233 },
+            { id: 126, name: "斎藤", q1: 497.6, q2: 589.0, q3: 603.1, q4: 1739.2, total: 3408.9, deals: 1912 },
+            { id: 127, name: "竹内", q1: 224.6, q2: 174.4, q3: 368.3, q4: 1468.1, total: 2233.4, deals: 1580 },
+            { id: 128, name: "真雄", q1: 0.0, q2: 0.0, q3: 334.0, q4: 902.9, total: 1236.9, deals: 633 },
+            { id: 129, name: "佐藤（大）", q1: 0.0, q2: 0.0, q3: 0.0, q4: 824.2, total: 824.2, deals: 283 },
+            { id: 130, name: "日比野", q1: 0.0, q2: 0.0, q3: 0.0, q4: 126.0, total: 126.0, deals: 158 },
+            { id: 131, name: "丸山", q1: 0.0, q2: 0.0, q3: 0.0, q4: -11.0, total: -11.0, deals: 0 },
+            { id: 132, name: "貞保", q1: 1980.0, q2: 2444.3, q3: 2522.1, q4: 3539.6, total: 10486.0, deals: 1623 },
+            { id: 133, name: "高田", q1: 531.3, q2: 935.9, q3: 1006.4, q4: 1731.0, total: 4204.6, deals: 1603 },
+            { id: 134, name: "和田", q1: 887.3, q2: 618.6, q3: 502.7, q4: 712.8, total: 2721.4, deals: 1185 },
+            { id: 135, name: "橋本", q1: 464.1, q2: 210.2, q3: 504.9, q4: 1234.9, total: 2414.1, deals: 1155 },
+            { id: 136, name: "飯野", q1: 0.0, q2: -2.1, q3: 231.6, q4: 508.5, total: 738.0, deals: 628 },
+            { id: 137, name: "日高", q1: 0.0, q2: 0.0, q3: 344.4, q4: 1368.2, total: 1710.6, deals: 686 },
+            { id: 138, name: "多田（裕）", q1: 0.0, q2: 0.0, q3: 148.7, q4: 922.1, total: 1070.8, deals: 338 },
+            { id: 139, name: "松下", q1: 0.0, q2: 118.7, q3: -180.1, q4: 0.0, total: -63.4, deals: 322 },
+            { id: 140, name: "佐藤祐太", q1: 1046.9, q2: 1268.1, q3: 989.1, q4: 972.3, total: 4276.4, deals: 1221 },
+            { id: 141, name: "黒沢", q1: 554.9, q2: 712.3, q3: 289.8, q4: 880.7, total: 2447.7, deals: 1289 },
+            { id: 142, name: "多田", q1: 682.5, q2: 676.0, q3: 1843.3, q4: 1182.0, total: 4333.8, deals: 948 },
+            { id: 143, name: "中野", q1: 343.2, q2: 326.9, q3: 187.2, q4: 831.5, total: 1688.8, deals: 1201 },
+            { id: 144, name: "松浦", q1: 385.6, q2: 452.5, q3: 109.5, q4: -52.1, total: 895.5, deals: 1079 },
+            { id: 145, name: "今野", q1: 0.0, q2: 100.1, q3: -198.2, q4: 273.1, total: 175.0, deals: 730 },
+            { id: 146, name: "根田", q1: 0.0, q2: 0.0, q3: 57.0, q4: 684.8, total: 721.8, deals: 244 },
+            { id: 147, name: "山浦", q1: 0.0, q2: 0.0, q3: 0.0, q4: 133.5, total: 133.5, deals: 337 },
+            { id: 148, name: "門田", q1: 0.0, q2: 0.0, q3: -130.8, q4: 0.0, total: -130.8, deals: 0 },
+            { id: 149, name: "石出", q1: 454.1, q2: 190.1, q3: 689.1, q4: 523.4, total: 1858.7, deals: 704 }, // 修正済み
+            { id: 150, name: "村山", q1: 380.8, q2: 414.4, q3: 428.6, q4: 857.9, total: 2081.7, deals: 1588 },
+            { id: 151, name: "後藤", q1: -14.8, q2: 207.3, q3: 217.8, q4: 531.3, total: 941.6, deals: 337 },
+            { id: 152, name: "加藤", q1: 279.3, q2: 285.0, q3: 295.7, q4: 331.1, total: 1171.1, deals: 110 },
+            { id: 153, name: "若木", q1: 158.1, q2: 181.7, q3: 321.6, q4: 479.3, total: 1138.7, deals: 110 },
+            { id: 154, name: "大木", q1: 206.5, q2: 264.6, q3: 218.3, q4: 0.0, total: 689.4, deals: 110 },
+            { id: 155, name: "榎木", q1: 1688.4, q2: 1184.1, q3: 1127.8, q4: 1801.1, total: 5799.3, deals: 1221 },
+            { id: 156, name: "ともや", q1: 978.6, q2: 1148.3, q3: 1581.8, q4: 3371.8, total: 7080.6, deals: 1986 },
+            { id: 157, name: "照井", q1: 391.5, q2: 521.3, q3: 322.1, q4: 1587.8, total: 2822.7, deals: 1385 },
+            { id: 158, name: "徳永", q1: 488.1, q2: 439.2, q3: 1198.5, q4: 2922.4, total: 5048.2, deals: 1179 },
+            { id: 159, name: "渡辺", q1: -10.6, q2: 237.5, q3: 516.4, q4: 2324.9, total: 3068.2, deals: 1179 },
+            { id: 160, name: "大野", q1: 0.0, q2: 0.0, q3: 99.1, q4: 839.3, total: 938.4, deals: 768 },
+            { id: 161, name: "川口", q1: 0.0, q2: 0.0, q3: 0.0, q4: 685.9, total: 685.9, deals: 333 },
+            { id: 162, name: "五月女", q1: 985.4, q2: 618.1, q3: 719.4, q4: 4429.2, total: 6732.0, deals: 1827 },
+            { id: 163, name: "半田", q1: 349.5, q2: 374.4, q3: 427.3, q4: 1205.7, total: 2358.9, deals: 1522 },
+            { id: 164, name: "村山（二）", q1: 759.4, q2: 734.8, q3: 438.5, q4: 1040.1, total: 2972.8, deals: 1449 },
+            { id: 165, name: "近藤", q1: 487.9, q2: 929.3, q3: 992.4, q4: 2919.4, total: 5329.0, deals: 1781 },
+            { id: 166, name: "野崎", q1: 0.0, q2: -12.2, q3: 219.8, q4: 996.8, total: 1204.4, deals: 812 },
+            { id: 167, name: "公美", q1: 1588.6, q2: 1042.8, q3: 940.7, q4: 1459.8, total: 5011.8, deals: 1995 },
+            { id: 168, name: "鎌田", q1: 488.8, q2: 455.2, q3: 378.2, q4: 978.7, total: 2295.0, deals: 1213 },
+            { id: 169, name: "木村（剛）", q1: 1012.8, q2: 645.3, q3: 1046.1, q4: 2711.4, total: 5415.6, deals: 1588 },
+            { id: 170, name: "小林", q1: 188.6, q2: 478.2, q3: 678.8, q4: 2033.9, total: 3377.5, deals: 1548 },
+            { id: 171, name: "水上", q1: 117.0, q2: 71.1, q3: 238.8, q4: 1025.3, total: 1452.2, deals: 1315 },
+            { id: 172, name: "榮", q1: 0.0, q2: -6.7, q3: -31.7, q4: 0.0, total: -38.4, deals: 85 },
+        ];
+
+        // --- Safari データ (18名に修正, 件数追加) ---
+        const SAFARI_DATA = [
+            { id: 301, name: "中嶋", q1: -203.3, q2: -99.6, q3: -145.7, q4: 125.4, total: -322.6, deals: 927 },
+            { id: 302, name: "岸", q1: 554.3, q2: 43.2, q3: 739.4, q4: 527.7, total: 1864.6, deals: 1007 },
+            { id: 303, name: "内野", q1: 493.5, q2: 803.3, q3: 952.5, q4: 1663.9, total: 3913.3, deals: 1136 },
+            { id: 304, name: "二見", q1: 152.4, q2: 292.2, q3: -47.3, q4: 159.2, total: 556.5, deals: 1197 },
+            { id: 305, name: "渋谷", q1: 124.8, q2: 80.0, q3: -119.8, q4: 379.0, total: 464.0, deals: 1132 },
+            { id: 306, name: "照沼", q1: 414.9, q2: 0.0, q3: 5.4, q4: 228.3, total: 648.6, deals: 594 },
+            { id: 307, name: "増子", q1: 210.7, q2: 182.2, q3: 31.7, q4: -91.9, total: 332.7, deals: 932 },
+            { id: 308, name: "林", q1: -89.1, q2: -195.1, q3: 364.7, q4: 836.5, total: 917.0, deals: 994 },
+            { id: 309, name: "新里", q1: -210.1, q2: -146.4, q3: -99.3, q4: 63.1, total: -392.7, deals: 816 },
+            { id: 310, name: "広瀬", q1: 453.4, q2: 487.5, q3: 124.8, q4: 1120.4, total: 2186.1, deals: 1481 },
+            { id: 311, name: "大野", q1: -48.4, q2: 8.8, q3: 81.9, q4: 396.9, total: 439.3, deals: 1157 },
+            { id: 312, name: "安部", q1: 446.5, q2: 220.3, q3: 68.1, q4: 611.7, total: 1346.6, deals: 1437 },
+            { id: 313, name: "西島", q1: 406.8, q2: 352.4, q3: 251.2, q4: 799.4, total: 2569.8, deals: 995 },
+            // 吉田・坂本・矢口を削除
+            { id: 316, name: "鴨崎", q1: 10.2, q2: 132.3, q3: 74.5, q4: 59.3, total: 276.3, deals: 457 },
+            { id: 317, name: "八木", q1: 1.6, q2: 63.5, q3: 13.7, q4: 98.7, total: 177.5, deals: 291 },
+            { id: 319, name: "山口", q1: 292.5, q2: 446.4, q3: 533.4, q4: 412.8, total: 1685.1, deals: 745 },
+            { id: 320, name: "渥美", q1: 65.6, q2: -20.1, q3: 313.7, q4: 70.2, total: 429.4, deals: 267 },
+            { id: 321, name: "森", q1: 0.0, q2: 0.0, q3: -41.2, q4: -39.2, total: -80.4, deals: 51 }
+        ];
+
+        // --- Custom Bar Shape ---
+        const CustomBar = (props) => {
+            const { fill, x, y, width, height } = props;
+            return <path d={`M${x},${y} L${x + width},${y} L${x + width - 5},${y + height} L${x - 5},${y + height} Z`} stroke="none" fill={fill} />;
+        };
+
+        // --- Three.js Background Component ---
+        const ThreeBackground = () => {
+            const mountRef = useRef(null);
+
+            useEffect(() => {
+                const canvas = document.getElementById('bg-canvas');
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+                
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+                const gridHelper = new THREE.GridHelper(200, 50, 0x333333, 0x111111);
+                scene.add(gridHelper);
+
+                const particlesGeometry = new THREE.BufferGeometry();
+                const particlesCount = 300;
+                const posArray = new Float32Array(particlesCount * 3);
+                for(let i = 0; i < particlesCount * 3; i++) {
+                    posArray[i] = (Math.random() - 0.5) * 100;
+                }
+                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+                const particlesMaterial = new THREE.PointsMaterial({
+                    size: 0.2,
+                    color: 0xfacc15,
+                    transparent: true,
+                    opacity: 0.8,
+                });
+                const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+                scene.add(particlesMesh);
+
+                const pGeo2 = new THREE.BufferGeometry();
+                const posArray2 = new Float32Array(particlesCount * 3);
+                for(let i = 0; i < particlesCount * 3; i++) {
+                    posArray2[i] = (Math.random() - 0.5) * 100;
+                }
+                pGeo2.setAttribute('position', new THREE.BufferAttribute(posArray2, 3));
+                const pMat2 = new THREE.PointsMaterial({
+                    size: 0.2,
+                    color: 0x00f0ff,
+                    transparent: true,
+                    opacity: 0.8,
+                });
+                const pMesh2 = new THREE.Points(pGeo2, pMat2);
+                scene.add(pMesh2);
+
+                camera.position.y = 10;
+                camera.position.z = 30;
+                camera.rotation.x = -0.2;
+
+                const animate = () => {
+                    requestAnimationFrame(animate);
+                    particlesMesh.rotation.y += 0.001;
+                    pMesh2.rotation.y -= 0.001;
+                    renderer.render(scene, camera);
+                };
+                animate();
+
+                const handleResize = () => {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                };
+                window.addEventListener('resize', handleResize);
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            return null;
+        };
+
+        const App = () => {
+            const [searchTerm, setSearchTerm] = useState("");
+
+            // データ集計
+            const stats = useMemo(() => {
+                const processData = (data, team) => {
+                    const total = data.reduce((acc, cur) => acc + cur.total, 0);
+                    const totalDeals = data.reduce((acc, cur) => acc + (cur.deals || 0), 0);
+                    const count = data.length;
+                    const avg = total / count;
+                    const avgDeals = totalDeals / count;
+                    const avgMonthlyProfit = avg / 12; // 1人あたり月平均利益
+                    const avgMonthlyDeals = avgDeals / 12; // 1人あたり月平均件数
+                    
+                    const sorted = [...data].map(d => ({...d, team})).sort((a, b) => b.total - a.total);
+                    const qAvg = {
+                        q1: data.reduce((acc, cur) => acc + cur.q1, 0) / count,
+                        q2: data.reduce((acc, cur) => acc + cur.q2, 0) / count,
+                        q3: data.reduce((acc, cur) => acc + cur.q3, 0) / count,
+                        q4: data.reduce((acc, cur) => acc + cur.q4, 0) / count,
+                    };
+                    return { total, totalDeals, count, avg, avgDeals, avgMonthlyProfit, avgMonthlyDeals, sorted, qAvg };
+                };
+                const raftel = processData(RAFTEL_DATA, 'raftel');
+                const safari = processData(SAFARI_DATA, 'safari');
+                const mixed = [...raftel.sorted, ...safari.sorted]
+                    .sort((a, b) => b.total - a.total)
+                    .map((d, i) => ({ ...d, rank: i + 1 }));
+                return { raftel, safari, mixed };
+            }, []);
+
+            const trendData = useMemo(() => [
+                { name: '1Q', ラフテル: stats.raftel.qAvg.q1, Safari: stats.safari.qAvg.q1 },
+                { name: '2Q', ラフテル: stats.raftel.qAvg.q2, Safari: stats.safari.qAvg.q2 },
+                { name: '3Q', ラフテル: stats.raftel.qAvg.q3, Safari: stats.safari.qAvg.q3 },
+                { name: '4Q', ラフテル: stats.raftel.qAvg.q4, Safari: stats.safari.qAvg.q4 },
+            ], [stats]);
+
+            const top10Data = useMemo(() => {
+                const list = [];
+                for (let i = 0; i < 10; i++) {
+                    const raf = stats.raftel.sorted[i];
+                    const saf = stats.safari.sorted[i];
+                    list.push({
+                        rank: i + 1,
+                        raftelName: raf ? raf.name : '-',
+                        raftelVal: raf ? raf.total : 0,
+                        safariName: saf ? saf.name : '-',
+                        safariVal: saf ? saf.total : 0,
+                    });
+                }
+                return list;
+            }, [stats]);
+
+            const filteredMixed = useMemo(() => searchTerm ? stats.mixed.filter(p => p.name.includes(searchTerm)) : stats.mixed, [stats.mixed, searchTerm]);
+            const formatNumber = (num) => new Intl.NumberFormat('ja-JP').format(Math.floor(num));
+            // 小数点第1位まで表示
+            const formatFloat = (num) => new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 1 }).format(num);
+
+            return (
+                <div className="relative z-10 w-full overflow-hidden">
+                    <ThreeBackground />
+                    
+                    {/* --- HERO SECTION --- */}
+                    <header className="relative w-full h-auto min-h-[90vh] flex flex-col items-center justify-center pt-24 px-6 md:px-12">
+                        <div className="container mx-auto flex flex-col xl:flex-row gap-12 items-center h-full">
+                            
+                            {/* Left: Info Panel */}
+                            <div className="w-full xl:w-2/5 space-y-12 z-20 flex flex-col justify-center">
+                                {/* Title */}
+                                <div>
+                                    <h1 className="text-6xl md:text-8xl font-gaming text-white tracking-widest drop-shadow-2xl mb-4 glitch-effect" data-text="PROFIT WARS">
+                                        PROFIT WARS
+                                    </h1>
+                                    <div className="inline-block border-l-4 border-safari pl-4">
+                                        <p className="text-xl font-bold text-gray-300 tracking-[0.2em]">営業利益 頂上決戦 2025</p>
+                                    </div>
+                                </div>
+
+                                {/* AVG Score Panel (HP Bar Style) - UPDATED to AVG */}
+                                <div className="panel-border p-8 bg-black/80 corner-deco">
+                                    <h2 className="text-xl font-gaming text-gray-400 mb-6 text-center tracking-widest">平均純利益 (年間/1人)</h2>
+                                    <div className="flex justify-between items-end mb-6 font-display">
+                                        <div className="text-left">
+                                            <div className="text-safari text-6xl text-shadow-safari">{formatNumber(stats.safari.avg)}</div>
+                                            <div className="text-sm text-gray-500 font-bold tracking-wider">SAFARI チーム</div>
+                                        </div>
+                                        <div className="text-4xl font-black italic text-white/20 pb-4">VS</div>
+                                        <div className="text-right">
+                                            <div className="text-raftel text-6xl text-shadow-raftel">{formatNumber(stats.raftel.avg)}</div>
+                                            <div className="text-sm text-gray-500 font-bold tracking-wider">RAFTEL チーム</div>
+                                        </div>
+                                    </div>
+                                    {/* HP Bar */}
+                                    <div className="h-8 w-full bg-gray-900 rounded-sm flex border-2 border-gray-600 relative overflow-hidden shadow-lg">
+                                        <div style={{ width: `${(stats.safari.avg / (stats.safari.avg + stats.raftel.avg)) * 100}%` }} className="h-full bg-safari shadow-[0_0_20px_#facc15] relative transition-all duration-1000 ease-out">
+                                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                        </div>
+                                        <div style={{ width: `${(stats.raftel.avg / (stats.safari.avg + stats.raftel.avg)) * 100}%` }} className="h-full bg-raftel shadow-[0_0_20px_#06b6d4] relative transition-all duration-1000 ease-out">
+                                            <div className="absolute inset-0 bg-white/20 animate-pulse" style={{animationDelay:'0.5s'}}></div>
+                                        </div>
+                                        <div className="absolute left-1/2 top-0 bottom-0 w-1.5 bg-black z-10 transform -skew-x-12 border-x border-gray-500"></div>
+                                    </div>
+                                </div>
+
+                                {/* Unit Status (Icons Swapped) */}
+                                <div className="grid grid-cols-2 gap-6">
+                                    {/* Safari (Trophy Icon) */}
+                                    <div className="panel-border p-6 bg-yellow-900/20 border-l-8 border-safari group hover:bg-yellow-900/40 transition-all flex flex-col justify-between h-auto min-h-[14rem]">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-safari font-bold font-tech text-lg mb-2 tracking-wider">SAFARI 部隊</h3>
+                                                <div className="text-5xl font-display text-white">{stats.safari.count}<span className="text-base text-gray-400 ml-2 font-sans font-bold">名</span></div>
+                                            </div>
+                                            <Icon path={icons.trophy} size={56} className="text-safari opacity-60 group-hover:opacity-100 transition-opacity"/>
+                                        </div>
+                                        <div className="space-y-3 pt-4 border-t border-white/10 text-sm text-gray-300">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-xs text-gray-400">平均件数(年)</span>
+                                                <span className="text-white font-bold font-display">{formatNumber(stats.safari.avgDeals)}</span>
+                                            </div>
+                                            
+                                            {/* 新規追加: 月間平均 */}
+                                            <div className="flex justify-between items-center bg-yellow-500/10 p-1 rounded">
+                                                <span className="text-xs text-safari font-bold">月平均利益</span>
+                                                <span className="text-safari font-bold font-display">{formatNumber(stats.safari.avgMonthlyProfit)}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center bg-yellow-500/10 p-1 rounded">
+                                                <span className="text-xs text-safari font-bold">月平均件数</span>
+                                                <span className="text-safari font-bold font-display">{formatFloat(stats.safari.avgMonthlyDeals)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Raftel (Users Icon) */}
+                                    <div className="panel-border p-6 bg-cyan-900/20 border-l-8 border-raftel group hover:bg-cyan-900/40 transition-all flex flex-col justify-between h-auto min-h-[14rem]">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <h3 className="text-raftel font-bold font-tech text-lg mb-2 tracking-wider">RAFTEL 部隊</h3>
+                                                <div className="text-5xl font-display text-white">{stats.raftel.count}<span className="text-base text-gray-400 ml-2 font-sans font-bold">名</span></div>
+                                            </div>
+                                            <Icon path={icons.users} size={56} className="text-raftel opacity-60 group-hover:opacity-100 transition-opacity"/>
+                                        </div>
+                                        <div className="space-y-3 pt-4 border-t border-white/10 text-sm text-gray-300">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-xs text-gray-400">平均件数(年)</span>
+                                                <span className="text-white font-bold font-display">{formatNumber(stats.raftel.avgDeals)}</span>
+                                            </div>
+                                            
+                                            {/* 新規追加: 月間平均 */}
+                                            <div className="flex justify-between items-center bg-cyan-500/10 p-1 rounded">
+                                                <span className="text-xs text-raftel font-bold">月平均利益</span>
+                                                <span className="text-raftel font-bold font-display">{formatNumber(stats.raftel.avgMonthlyProfit)}</span>
+                                            </div>
+                                            <div className="flex justify-between items-center bg-cyan-500/10 p-1 rounded">
+                                                <span className="text-xs text-raftel font-bold">月平均件数</span>
+                                                <span className="text-raftel font-bold font-display">{formatFloat(stats.raftel.avgMonthlyDeals)}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right: Hero Image */}
+                            <div className="w-full xl:w-3/5 h-[60vh] xl:h-[90vh] relative z-10 flex items-center justify-center">
+                                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10"></div>
+                                <img 
+                                    src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/01/lui_coco_29_20251027_063729.png" 
+                                    className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(0,240,255,0.2)] animate-pulse-slow"
+                                    alt="Hero Character"
+                                />
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* --- MAIN CONTENT (Charts & Ranking) --- */}
+                    <div className="container mx-auto px-6 pb-24 relative z-30">
+                        <div className="flex flex-col xl:flex-row gap-10">
+                            
+                            {/* LEFT COLUMN: Charts */}
+                            <div className="w-full xl:w-2/3 space-y-12">
+                                
+                                {/* TOP 10 CLASH */}
+                                <div className="panel-border p-8 bg-black/80 corner-deco">
+                                    <div className="flex items-center gap-4 mb-8 border-b border-gray-700 pb-4">
+                                        <div className="p-2 bg-red-900/30 rounded border border-red-500/50">
+                                            <Icon path={icons.sword} size={32} className="text-red-500 animate-pulse" />
+                                        </div>
+                                        <h3 className="text-3xl font-bold text-white font-tech tracking-wider">トップ10 エース対決 (TOP 10 CLASH)</h3>
+                                    </div>
+                                    <div className="h-[800px] w-full">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <BarChart layout="vertical" data={top10Data} margin={{ top: 5, right: 30, left: 30, bottom: 5 }} barGap={8}>
+                                                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#333" />
+                                                <XAxis type="number" stroke="#666" tickFormatter={formatNumber} hide />
+                                                <YAxis dataKey="rank" type="category" stroke="#fff" width={40} tick={{fontFamily: 'Anton', fontSize: 20, fill:'#888'}} />
+                                                <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} contentStyle={{ backgroundColor: '#000', border: '1px solid #444', fontFamily:'Orbitron', fontSize:'14px' }} formatter={(value) => formatNumber(value)} />
+                                                <Legend verticalAlign="top" height={40} iconType="diamond" wrapperStyle={{fontSize: '14px', fontWeight:'bold'}}/>
+                                                <Bar dataKey="raftelVal" name="RAFTEL" fill="#00f0ff" barSize={20} shape={<CustomBar />}>
+                                                    <LabelList dataKey="raftelName" position="insideLeft" fill="#000" style={{fontWeight: 'bold', fontSize: '12px', fontFamily:'Noto Sans JP'}} />
+                                                    <LabelList dataKey="raftelVal" position="right" fill="#00f0ff" style={{fontFamily: 'Anton', fontSize: '16px'}} formatter={formatNumber} />
+                                                </Bar>
+                                                <Bar dataKey="safariVal" name="SAFARI" fill="#facc15" barSize={20} shape={<CustomBar />}>
+                                                    <LabelList dataKey="safariName" position="insideLeft" fill="#000" style={{fontWeight: 'bold', fontSize: '12px', fontFamily:'Noto Sans JP'}} />
+                                                    <LabelList dataKey="safariVal" position="right" fill="#facc15" style={{fontFamily: 'Anton', fontSize: '16px'}} formatter={formatNumber} />
+                                                </Bar>
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+
+                                {/* Trend */}
+                                <div className="panel-border p-6 bg-black/60">
+                                    <h4 className="text-gray-300 font-tech text-base mb-6 flex items-center gap-3 border-l-4 border-purple-500 pl-3">
+                                        <Icon path={icons.trend} size={20} className="text-purple-500"/> 1人あたり平均推移 (PER CAPITA TREND)
+                                    </h4>
+                                    <div className="h-96">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <LineChart data={trendData} margin={{ top: 20, right: 30, left: 10, bottom: 0 }}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#222" />
+                                                <XAxis dataKey="name" stroke="#666" tick={{fontFamily: 'Orbitron', fontSize: 12, fill: '#aaa'}} />
+                                                <YAxis stroke="#666" tickFormatter={formatNumber} fontSize={12} tick={{fontFamily: 'Orbitron', fill: '#aaa'}} />
+                                                <Tooltip contentStyle={{ backgroundColor: '#000', border: '1px solid #333' }} formatter={formatNumber} />
+                                                <Legend />
+                                                <Line type="monotone" dataKey="ラフテル" stroke="#00f0ff" strokeWidth={3} dot={{r:5, fill:'#00f0ff'}} activeDot={{r:8}} />
+                                                <Line type="monotone" dataKey="Safari" stroke="#facc15" strokeWidth={3} dot={{r:5, fill:'#facc15'}} activeDot={{r:8}} />
+                                            </LineChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* RIGHT COLUMN: Total Ranking */}
+                            <div className="w-full xl:w-1/3">
+                                <div className="sticky top-4 panel-border bg-black/95 h-[calc(100vh-2rem)] flex flex-col corner-deco border-2 border-gray-800">
+                                    <div className="p-6 border-b border-gray-800 bg-white/5 z-10">
+                                        <h2 className="text-2xl font-gaming text-white flex items-center gap-3 mb-4">
+                                            <Icon path={icons.crown} size={28} className="text-purple-500" /> 全90名総合ランキング
+                                        </h2>
+                                        <div className="relative">
+                                            <input 
+                                                type="text" 
+                                                placeholder="氏名検索..." 
+                                                className="w-full bg-black border border-gray-600 rounded-none px-4 py-3 pl-10 text-sm text-white focus:outline-none focus:border-safari transition-colors font-mono placeholder-gray-600"
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                            />
+                                            <div className="absolute left-3 top-3 text-gray-500"><Icon path={icons.search} size={16} /></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="overflow-y-auto flex-1 p-0 custom-scrollbar">
+                                        <table className="w-full text-sm text-left border-collapse">
+                                            <thead className="text-gray-500 font-mono sticky top-0 bg-black z-10 border-b border-gray-800 shadow-md">
+                                                <tr>
+                                                    <th className="px-3 py-3 text-center w-12 bg-black font-bold">#</th>
+                                                    <th className="px-3 py-3 bg-black font-bold">氏名 / 所属</th>
+                                                    <th className="px-3 py-3 text-right bg-black font-bold">件数</th>
+                                                    <th className="px-3 py-3 text-right bg-black font-bold">純利益</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-gray-800/50">
+                                                {filteredMixed.map((row) => (
+                                                    <tr key={`${row.team}-${row.id}`} className="group hover:bg-white/10 transition-colors cursor-default">
+                                                        <td className="px-3 py-4 text-center">
+                                                            <span className={`inline-block w-8 h-8 leading-8 text-center clip-cut font-bold font-gaming text-lg ${
+                                                                row.rank <= 3 ? 'bg-purple-600 text-white shadow-[0_0_15px_#9333ea]' : 
+                                                                row.rank <= 10 ? 'bg-gray-700 text-white' : 'text-gray-600'
+                                                            }`}>
+                                                                {row.rank}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-3 py-4">
+                                                            <div className="font-bold text-white text-base mb-1">{row.name}</div>
+                                                            <span className={`text-[10px] px-2 py-0.5 rounded-none border ${
+                                                                row.team === 'safari' ? 'border-safari text-safari bg-safari/10' : 'border-raftel text-raftel bg-raftel/10'
+                                                            } font-mono font-bold tracking-wider`}>
+                                                                {row.team === 'safari' ? 'SAFARI' : 'RAFTEL'}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-3 py-4 text-right text-gray-500 font-mono text-sm">
+                                                            {row.deals ? formatNumber(row.deals) : '-'}
+                                                        </td>
+                                                        <td className="px-3 py-4 text-right font-display text-xl text-gray-400 group-hover:text-white transition-colors">
+                                                            {formatNumber(row.total)}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
