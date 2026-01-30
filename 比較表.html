@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROFIT WARS | Safari vs RAFTEL</title>
+    <title>営業利益 競合比較レポート | Safari vs RAFTEL</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Black+Ops+One&family=Noto+Sans+JP:wght@400;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,36 +19,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"Noto Sans JP"', 'sans-serif'],
-                        display: ['"Anton"', 'sans-serif'],
-                        gaming: ['"Black Ops One"', 'cursive'],
-                        tech: ['"Orbitron"', 'sans-serif'],
+                        sans: ['"Inter"', '"Noto Sans JP"', 'sans-serif'],
                     },
                     colors: {
                         safari: '#facc15', // Yellow
-                        raftel: '#00f0ff', // Cyan (More neon)
-                        dark: '#050505',
-                        panel: 'rgba(17, 17, 17, 0.9)',
-                    },
-                    backgroundImage: {
-                        'grid-pattern': "linear-gradient(to right, #222 1px, transparent 1px), linear-gradient(to bottom, #222 1px, transparent 1px)",
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
+                        raftel: '#00f0ff', // Cyan
+                        dark: '#0f172a',   // Slate-900
+                        panel: '#1e293b',  // Slate-800
+                        border: '#334155', // Slate-700
                     }
                 }
             }
@@ -57,136 +41,63 @@
 
     <style>
         body {
-            background-color: #050505;
-            color: #ffffff;
-            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
             overflow-x: hidden;
-            font-size: 18px; /* 全体のベース文字サイズアップ */
+            font-size: 14px;
         }
-
-        /* ゲーム風背景 */
-        .bg-cyber {
-            background: 
-                radial-gradient(circle at 50% 0%, #1a1a1a 0%, #050505 80%),
-                linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
-        }
-
-        /* ネオンテキスト */
-        .neon-text-safari {
-            text-shadow: 0 0 5px #facc15, 0 0 10px #facc15, 0 0 20px #facc15;
-        }
-        .neon-text-raftel {
-            text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff, 0 0 20px #00f0ff;
-        }
-        .text-shadow-safari { text-shadow: 2px 2px 0px rgba(250, 204, 21, 0.3); }
-        .text-shadow-raftel { text-shadow: 2px 2px 0px rgba(0, 240, 255, 0.3); }
 
         /* スクロールバー */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #000; 
+            background: #0f172a; 
         }
         ::-webkit-scrollbar-thumb {
-            background: #333; 
-            border-radius: 5px;
+            background: #475569; 
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #facc15; 
+            background: #64748b; 
         }
 
-        .panel-border {
-            position: relative;
-            background: rgba(15, 15, 15, 0.9);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-        }
-        /* テック風コーナー装飾 */
-        .corner-deco::before {
-            content: '';
-            position: absolute;
-            top: -1px; left: -1px;
-            width: 20px; height: 20px;
-            border-top: 4px solid rgba(255,255,255,0.8);
-            border-left: 4px solid rgba(255,255,255,0.8);
-            z-index: 10;
-        }
-        .corner-deco::after {
-            content: '';
-            position: absolute;
-            bottom: -1px; right: -1px;
-            width: 20px; height: 20px;
-            border-bottom: 4px solid rgba(255,255,255,0.8);
-            border-right: 4px solid rgba(255,255,255,0.8);
-            z-index: 10;
+        .dashboard-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        /* 斜めカット */
-        .clip-diagonal {
-            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-        }
-        
-        .glitch-effect {
-            position: relative;
-        }
-        .glitch-effect::before,
-        .glitch-effect::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #050505;
-        }
-        .glitch-effect::before {
-            left: 2px;
-            text-shadow: -1px 0 #facc15;
-            clip: rect(24px, 550px, 90px, 0);
-            animation: glitch-anim-2 3s infinite linear alternate-reverse;
-        }
-        .glitch-effect::after {
-            left: -2px;
-            text-shadow: -1px 0 #00f0ff;
-            clip: rect(85px, 550px, 140px, 0);
-            animation: glitch-anim 2.5s infinite linear alternate-reverse;
-        }
-        @keyframes glitch-anim {
-            0% { clip: rect(14px, 9999px, 122px, 0); }
-            100% { clip: rect(63px, 9999px, 86px, 0); }
-        }
-        @keyframes glitch-anim-2 {
-            0% { clip: rect(69px, 9999px, 86px, 0); }
-            100% { clip: rect(3px, 9999px, 12px, 0); }
+        .table-row-hover:hover {
+            background-color: rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
-<body class="bg-cyber">
+<body>
     <div id="root"></div>
-    <canvas id="bg-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 opacity-40"></canvas>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
+        const { useState, useMemo } = React;
         const { 
             BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
-            LineChart, Line, ScatterChart, Scatter, AreaChart, Area, ZAxis, ReferenceLine, LabelList
+            LineChart, Line, ScatterChart, Scatter, LabelList
         } = Recharts;
 
         // --- アイコン ---
-        const Icon = ({ path, size = 24, className = "" }) => (
+        const Icon = ({ path, size = 20, className = "" }) => (
             <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 {path}
             </svg>
         );
         const icons = {
-            trophy: <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z" />,
-            users: <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />,
-            trend: <path d="M23 6l-9.5 9.5-5-5L1 18" />,
             search: <path d="M11 11m-8 0a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M21 21l-4.35-4.35" />,
-            sword: <path d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2" />, 
-            crown: <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+            trend: <path d="M23 6l-9.5 9.5-5-5L1 18" />,
+            bar: <path d="M12 20V10M18 20V4M6 20v-4" />,
+            users: <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />,
+            money: <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
         };
 
         // --- データ定義 ---
@@ -240,7 +151,7 @@
             { id: 146, name: "根田", q1: 0.0, q2: 0.0, q3: 57.0, q4: 684.8, total: 721.8, deals: 244 },
             { id: 147, name: "山浦", q1: 0.0, q2: 0.0, q3: 0.0, q4: 133.5, total: 133.5, deals: 337 },
             { id: 148, name: "門田", q1: 0.0, q2: 0.0, q3: -130.8, q4: 0.0, total: -130.8, deals: 0 },
-            { id: 149, name: "石出", q1: 454.1, q2: 190.1, q3: 689.1, q4: 523.4, total: 1858.7, deals: 704 }, // 修正済み
+            { id: 149, name: "石出", q1: 454.1, q2: 190.1, q3: 689.1, q4: 523.4, total: 1858.7, deals: 704 },
             { id: 150, name: "村山", q1: 380.8, q2: 414.4, q3: 428.6, q4: 857.9, total: 2081.7, deals: 1588 },
             { id: 151, name: "後藤", q1: -14.8, q2: 207.3, q3: 217.8, q4: 531.3, total: 941.6, deals: 337 },
             { id: 152, name: "加藤", q1: 279.3, q2: 285.0, q3: 295.7, q4: 331.1, total: 1171.1, deals: 110 },
@@ -289,83 +200,6 @@
             { id: 321, name: "森", q1: 0.0, q2: 0.0, q3: -41.2, q4: -39.2, total: -80.4, deals: 51 }
         ];
 
-        // --- Custom Bar Shape ---
-        const CustomBar = (props) => {
-            const { fill, x, y, width, height } = props;
-            return <path d={`M${x},${y} L${x + width},${y} L${x + width - 5},${y + height} L${x - 5},${y + height} Z`} stroke="none" fill={fill} />;
-        };
-
-        // --- Three.js Background Component ---
-        const ThreeBackground = () => {
-            const mountRef = useRef(null);
-
-            useEffect(() => {
-                const canvas = document.getElementById('bg-canvas');
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-                
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-                const gridHelper = new THREE.GridHelper(200, 50, 0x333333, 0x111111);
-                scene.add(gridHelper);
-
-                const particlesGeometry = new THREE.BufferGeometry();
-                const particlesCount = 300;
-                const posArray = new Float32Array(particlesCount * 3);
-                for(let i = 0; i < particlesCount * 3; i++) {
-                    posArray[i] = (Math.random() - 0.5) * 100;
-                }
-                particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-                const particlesMaterial = new THREE.PointsMaterial({
-                    size: 0.2,
-                    color: 0xfacc15,
-                    transparent: true,
-                    opacity: 0.8,
-                });
-                const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-                scene.add(particlesMesh);
-
-                const pGeo2 = new THREE.BufferGeometry();
-                const posArray2 = new Float32Array(particlesCount * 3);
-                for(let i = 0; i < particlesCount * 3; i++) {
-                    posArray2[i] = (Math.random() - 0.5) * 100;
-                }
-                pGeo2.setAttribute('position', new THREE.BufferAttribute(posArray2, 3));
-                const pMat2 = new THREE.PointsMaterial({
-                    size: 0.2,
-                    color: 0x00f0ff,
-                    transparent: true,
-                    opacity: 0.8,
-                });
-                const pMesh2 = new THREE.Points(pGeo2, pMat2);
-                scene.add(pMesh2);
-
-                camera.position.y = 10;
-                camera.position.z = 30;
-                camera.rotation.x = -0.2;
-
-                const animate = () => {
-                    requestAnimationFrame(animate);
-                    particlesMesh.rotation.y += 0.001;
-                    pMesh2.rotation.y -= 0.001;
-                    renderer.render(scene, camera);
-                };
-                animate();
-
-                const handleResize = () => {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                };
-                window.addEventListener('resize', handleResize);
-                return () => window.removeEventListener('resize', handleResize);
-            }, []);
-
-            return null;
-        };
-
         const App = () => {
             const [searchTerm, setSearchTerm] = useState("");
 
@@ -376,9 +210,7 @@
                     const totalDeals = data.reduce((acc, cur) => acc + (cur.deals || 0), 0);
                     const count = data.length;
                     const avg = total / count;
-                    const avgDeals = totalDeals / count;
-                    const avgMonthlyProfit = avg / 12; // 1人あたり月平均利益
-                    const avgMonthlyDeals = avgDeals / 12; // 1人あたり月平均件数
+                    const avgDeals = totalDeals / count; // 平均件数 (1人あたり)
                     
                     const sorted = [...data].map(d => ({...d, team})).sort((a, b) => b.total - a.total);
                     const qAvg = {
@@ -387,7 +219,7 @@
                         q3: data.reduce((acc, cur) => acc + cur.q3, 0) / count,
                         q4: data.reduce((acc, cur) => acc + cur.q4, 0) / count,
                     };
-                    return { total, totalDeals, count, avg, avgDeals, avgMonthlyProfit, avgMonthlyDeals, sorted, qAvg };
+                    return { total, totalDeals, count, avg, avgDeals, sorted, qAvg };
                 };
                 const raftel = processData(RAFTEL_DATA, 'raftel');
                 const safari = processData(SAFARI_DATA, 'safari');
@@ -422,245 +254,215 @@
 
             const filteredMixed = useMemo(() => searchTerm ? stats.mixed.filter(p => p.name.includes(searchTerm)) : stats.mixed, [stats.mixed, searchTerm]);
             const formatNumber = (num) => new Intl.NumberFormat('ja-JP').format(Math.floor(num));
-            // 小数点第1位まで表示
+            // 小数点第1位まで
             const formatFloat = (num) => new Intl.NumberFormat('ja-JP', { maximumFractionDigits: 1 }).format(num);
 
             return (
-                <div className="relative z-10 w-full overflow-hidden">
-                    <ThreeBackground />
+                <div className="container mx-auto px-6 py-8">
                     
-                    {/* --- HERO SECTION --- */}
-                    <header className="relative w-full h-auto min-h-[90vh] flex flex-col items-center justify-center pt-24 px-6 md:px-12">
-                        <div className="container mx-auto flex flex-col xl:flex-row gap-12 items-center h-full">
-                            
-                            {/* Left: Info Panel */}
-                            <div className="w-full xl:w-2/5 space-y-12 z-20 flex flex-col justify-center">
-                                {/* Title */}
-                                <div>
-                                    <h1 className="text-6xl md:text-8xl font-gaming text-white tracking-widest drop-shadow-2xl mb-4 glitch-effect" data-text="PROFIT WARS">
-                                        PROFIT WARS
-                                    </h1>
-                                    <div className="inline-block border-l-4 border-safari pl-4">
-                                        <p className="text-xl font-bold text-gray-300 tracking-[0.2em]">営業利益 頂上決戦 2025</p>
-                                    </div>
-                                </div>
-
-                                {/* AVG Score Panel (HP Bar Style) - UPDATED to AVG */}
-                                <div className="panel-border p-8 bg-black/80 corner-deco">
-                                    <h2 className="text-xl font-gaming text-gray-400 mb-6 text-center tracking-widest">平均純利益 (年間/1人)</h2>
-                                    <div className="flex justify-between items-end mb-6 font-display">
-                                        <div className="text-left">
-                                            <div className="text-safari text-6xl text-shadow-safari">{formatNumber(stats.safari.avg)}</div>
-                                            <div className="text-sm text-gray-500 font-bold tracking-wider">SAFARI チーム</div>
-                                        </div>
-                                        <div className="text-4xl font-black italic text-white/20 pb-4">VS</div>
-                                        <div className="text-right">
-                                            <div className="text-raftel text-6xl text-shadow-raftel">{formatNumber(stats.raftel.avg)}</div>
-                                            <div className="text-sm text-gray-500 font-bold tracking-wider">RAFTEL チーム</div>
-                                        </div>
-                                    </div>
-                                    {/* HP Bar */}
-                                    <div className="h-8 w-full bg-gray-900 rounded-sm flex border-2 border-gray-600 relative overflow-hidden shadow-lg">
-                                        <div style={{ width: `${(stats.safari.avg / (stats.safari.avg + stats.raftel.avg)) * 100}%` }} className="h-full bg-safari shadow-[0_0_20px_#facc15] relative transition-all duration-1000 ease-out">
-                                            <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
-                                        </div>
-                                        <div style={{ width: `${(stats.raftel.avg / (stats.safari.avg + stats.raftel.avg)) * 100}%` }} className="h-full bg-raftel shadow-[0_0_20px_#06b6d4] relative transition-all duration-1000 ease-out">
-                                            <div className="absolute inset-0 bg-white/20 animate-pulse" style={{animationDelay:'0.5s'}}></div>
-                                        </div>
-                                        <div className="absolute left-1/2 top-0 bottom-0 w-1.5 bg-black z-10 transform -skew-x-12 border-x border-gray-500"></div>
-                                    </div>
-                                </div>
-
-                                {/* Unit Status (Icons Swapped) */}
-                                <div className="grid grid-cols-2 gap-6">
-                                    {/* Safari (Trophy Icon) */}
-                                    <div className="panel-border p-6 bg-yellow-900/20 border-l-8 border-safari group hover:bg-yellow-900/40 transition-all flex flex-col justify-between h-auto min-h-[14rem]">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="text-safari font-bold font-tech text-lg mb-2 tracking-wider">SAFARI 部隊</h3>
-                                                <div className="text-5xl font-display text-white">{stats.safari.count}<span className="text-base text-gray-400 ml-2 font-sans font-bold">名</span></div>
-                                            </div>
-                                            <Icon path={icons.trophy} size={56} className="text-safari opacity-60 group-hover:opacity-100 transition-opacity"/>
-                                        </div>
-                                        <div className="space-y-3 pt-4 border-t border-white/10 text-sm text-gray-300">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-xs text-gray-400">平均件数(年)</span>
-                                                <span className="text-white font-bold font-display">{formatNumber(stats.safari.avgDeals)}</span>
-                                            </div>
-                                            
-                                            {/* 新規追加: 月間平均 */}
-                                            <div className="flex justify-between items-center bg-yellow-500/10 p-1 rounded">
-                                                <span className="text-xs text-safari font-bold">月平均利益</span>
-                                                <span className="text-safari font-bold font-display">{formatNumber(stats.safari.avgMonthlyProfit)}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center bg-yellow-500/10 p-1 rounded">
-                                                <span className="text-xs text-safari font-bold">月平均件数</span>
-                                                <span className="text-safari font-bold font-display">{formatFloat(stats.safari.avgMonthlyDeals)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Raftel (Users Icon) */}
-                                    <div className="panel-border p-6 bg-cyan-900/20 border-l-8 border-raftel group hover:bg-cyan-900/40 transition-all flex flex-col justify-between h-auto min-h-[14rem]">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="text-raftel font-bold font-tech text-lg mb-2 tracking-wider">RAFTEL 部隊</h3>
-                                                <div className="text-5xl font-display text-white">{stats.raftel.count}<span className="text-base text-gray-400 ml-2 font-sans font-bold">名</span></div>
-                                            </div>
-                                            <Icon path={icons.users} size={56} className="text-raftel opacity-60 group-hover:opacity-100 transition-opacity"/>
-                                        </div>
-                                        <div className="space-y-3 pt-4 border-t border-white/10 text-sm text-gray-300">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-xs text-gray-400">平均件数(年)</span>
-                                                <span className="text-white font-bold font-display">{formatNumber(stats.raftel.avgDeals)}</span>
-                                            </div>
-                                            
-                                            {/* 新規追加: 月間平均 */}
-                                            <div className="flex justify-between items-center bg-cyan-500/10 p-1 rounded">
-                                                <span className="text-xs text-raftel font-bold">月平均利益</span>
-                                                <span className="text-raftel font-bold font-display">{formatNumber(stats.raftel.avgMonthlyProfit)}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center bg-cyan-500/10 p-1 rounded">
-                                                <span className="text-xs text-raftel font-bold">月平均件数</span>
-                                                <span className="text-raftel font-bold font-display">{formatFloat(stats.raftel.avgMonthlyDeals)}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right: Hero Image */}
-                            <div className="w-full xl:w-3/5 h-[60vh] xl:h-[90vh] relative z-10 flex items-center justify-center">
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10"></div>
-                                <img 
-                                    src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/01/lui_coco_29_20251027_063729.png" 
-                                    className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(0,240,255,0.2)] animate-pulse-slow"
-                                    alt="Hero Character"
-                                />
-                            </div>
+                    {/* Header: Logo & Title */}
+                    <header className="flex flex-col md:flex-row items-center gap-6 mb-10 pb-6 border-b border-gray-800">
+                        <img 
+                            src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/01/e99b86e59088.png" 
+                            alt="Logo" 
+                            className="h-16 w-auto object-contain rounded-md"
+                        />
+                        <div>
+                            <h1 className="text-3xl font-bold text-white tracking-wide">
+                                <span className="text-safari">営業利益</span> 競合比較レポート
+                            </h1>
+                            <p className="text-slate-400 mt-1">2025年度 実績対比分析 (Safari vs Raftel)</p>
                         </div>
                     </header>
 
-                    {/* --- MAIN CONTENT (Charts & Ranking) --- */}
-                    <div className="container mx-auto px-6 pb-24 relative z-30">
-                        <div className="flex flex-col xl:flex-row gap-10">
-                            
-                            {/* LEFT COLUMN: Charts */}
-                            <div className="w-full xl:w-2/3 space-y-12">
-                                
-                                {/* TOP 10 CLASH */}
-                                <div className="panel-border p-8 bg-black/80 corner-deco">
-                                    <div className="flex items-center gap-4 mb-8 border-b border-gray-700 pb-4">
-                                        <div className="p-2 bg-red-900/30 rounded border border-red-500/50">
-                                            <Icon path={icons.sword} size={32} className="text-red-500 animate-pulse" />
-                                        </div>
-                                        <h3 className="text-3xl font-bold text-white font-tech tracking-wider">トップ10 エース対決 (TOP 10 CLASH)</h3>
-                                    </div>
-                                    <div className="h-[800px] w-full">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <BarChart layout="vertical" data={top10Data} margin={{ top: 5, right: 30, left: 30, bottom: 5 }} barGap={8}>
-                                                <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#333" />
-                                                <XAxis type="number" stroke="#666" tickFormatter={formatNumber} hide />
-                                                <YAxis dataKey="rank" type="category" stroke="#fff" width={40} tick={{fontFamily: 'Anton', fontSize: 20, fill:'#888'}} />
-                                                <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} contentStyle={{ backgroundColor: '#000', border: '1px solid #444', fontFamily:'Orbitron', fontSize:'14px' }} formatter={(value) => formatNumber(value)} />
-                                                <Legend verticalAlign="top" height={40} iconType="diamond" wrapperStyle={{fontSize: '14px', fontWeight:'bold'}}/>
-                                                <Bar dataKey="raftelVal" name="RAFTEL" fill="#00f0ff" barSize={20} shape={<CustomBar />}>
-                                                    <LabelList dataKey="raftelName" position="insideLeft" fill="#000" style={{fontWeight: 'bold', fontSize: '12px', fontFamily:'Noto Sans JP'}} />
-                                                    <LabelList dataKey="raftelVal" position="right" fill="#00f0ff" style={{fontFamily: 'Anton', fontSize: '16px'}} formatter={formatNumber} />
-                                                </Bar>
-                                                <Bar dataKey="safariVal" name="SAFARI" fill="#facc15" barSize={20} shape={<CustomBar />}>
-                                                    <LabelList dataKey="safariName" position="insideLeft" fill="#000" style={{fontWeight: 'bold', fontSize: '12px', fontFamily:'Noto Sans JP'}} />
-                                                    <LabelList dataKey="safariVal" position="right" fill="#facc15" style={{fontFamily: 'Anton', fontSize: '16px'}} formatter={formatNumber} />
-                                                </Bar>
-                                            </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
-                                </div>
+                    {/* KPI Cards (Top Row) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                        {/* Safari KPI */}
+                        <div className="dashboard-card p-6 border-l-4 border-safari relative overflow-hidden">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-safari font-bold tracking-wider">SAFARI (自社)</span>
+                                <Icon path={icons.users} className="text-safari opacity-50"/>
+                            </div>
+                            <div className="text-3xl font-bold text-white mb-1">{formatNumber(stats.safari.total)} <span className="text-xs text-gray-500 font-normal">万円</span></div>
+                            <div className="text-sm text-gray-400">合計純利益</div>
+                            <div className="mt-4 pt-3 border-t border-gray-700 flex justify-between text-sm">
+                                <div><span className="text-gray-500 block text-xs">平均利益</span><span className="text-white font-bold">{formatNumber(stats.safari.avg)}</span></div>
+                                <div><span className="text-gray-500 block text-xs">平均件数</span><span className="text-white font-bold">{formatFloat(stats.safari.avgDeals)}</span></div>
+                                <div><span className="text-gray-500 block text-xs">人数</span><span className="text-white font-bold">{stats.safari.count}</span></div>
+                            </div>
+                        </div>
 
-                                {/* Trend */}
-                                <div className="panel-border p-6 bg-black/60">
-                                    <h4 className="text-gray-300 font-tech text-base mb-6 flex items-center gap-3 border-l-4 border-purple-500 pl-3">
-                                        <Icon path={icons.trend} size={20} className="text-purple-500"/> 1人あたり平均推移 (PER CAPITA TREND)
-                                    </h4>
-                                    <div className="h-96">
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <LineChart data={trendData} margin={{ top: 20, right: 30, left: 10, bottom: 0 }}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="#222" />
-                                                <XAxis dataKey="name" stroke="#666" tick={{fontFamily: 'Orbitron', fontSize: 12, fill: '#aaa'}} />
-                                                <YAxis stroke="#666" tickFormatter={formatNumber} fontSize={12} tick={{fontFamily: 'Orbitron', fill: '#aaa'}} />
-                                                <Tooltip contentStyle={{ backgroundColor: '#000', border: '1px solid #333' }} formatter={formatNumber} />
-                                                <Legend />
-                                                <Line type="monotone" dataKey="ラフテル" stroke="#00f0ff" strokeWidth={3} dot={{r:5, fill:'#00f0ff'}} activeDot={{r:8}} />
-                                                <Line type="monotone" dataKey="Safari" stroke="#facc15" strokeWidth={3} dot={{r:5, fill:'#facc15'}} activeDot={{r:8}} />
-                                            </LineChart>
-                                        </ResponsiveContainer>
-                                    </div>
+                        {/* Raftel KPI */}
+                        <div className="dashboard-card p-6 border-l-4 border-raftel relative overflow-hidden">
+                            <div className="flex justify-between items-start mb-2">
+                                <span className="text-raftel font-bold tracking-wider">RAFTEL (競合)</span>
+                                <Icon path={icons.trophy} className="text-raftel opacity-50"/>
+                            </div>
+                            <div className="text-3xl font-bold text-white mb-1">{formatNumber(stats.raftel.total)} <span className="text-xs text-gray-500 font-normal">万円</span></div>
+                            <div className="text-sm text-gray-400">合計純利益</div>
+                            <div className="mt-4 pt-3 border-t border-gray-700 flex justify-between text-sm">
+                                <div><span className="text-gray-500 block text-xs">平均利益</span><span className="text-white font-bold">{formatNumber(stats.raftel.avg)}</span></div>
+                                <div><span className="text-gray-500 block text-xs">平均件数</span><span className="text-white font-bold">{formatFloat(stats.raftel.avgDeals)}</span></div>
+                                <div><span className="text-gray-500 block text-xs">人数</span><span className="text-white font-bold">{stats.raftel.count}</span></div>
+                            </div>
+                        </div>
+
+                        {/* Comparison 1: Avg Profit */}
+                        <div className="dashboard-card p-6 flex flex-col justify-center">
+                             <div className="flex items-center gap-2 mb-3 text-gray-400 text-sm font-bold">
+                                <Icon path={icons.money} size={18}/> 1人あたり平均利益比較
+                            </div>
+                            <div className="relative h-4 bg-gray-800 rounded-full overflow-hidden mb-2 flex">
+                                <div style={{width: `${(stats.safari.avg / (stats.safari.avg + stats.raftel.avg)) * 100}%`}} className="h-full bg-safari"></div>
+                                <div className="flex-1 h-full bg-raftel"></div>
+                            </div>
+                            <div className="flex justify-between text-xs font-bold">
+                                <span className="text-safari">{formatNumber(stats.safari.avg)}</span>
+                                <span className="text-gray-600">VS</span>
+                                <span className="text-raftel">{formatNumber(stats.raftel.avg)}</span>
+                            </div>
+                        </div>
+
+                        {/* Comparison 2: Avg Deals */}
+                        <div className="dashboard-card p-6 flex flex-col justify-center">
+                             <div className="flex items-center gap-2 mb-3 text-gray-400 text-sm font-bold">
+                                <Icon path={icons.bar} size={18}/> 1人あたり平均件数比較
+                            </div>
+                            <div className="relative h-4 bg-gray-800 rounded-full overflow-hidden mb-2 flex">
+                                <div style={{width: `${(stats.safari.avgDeals / (stats.safari.avgDeals + stats.raftel.avgDeals)) * 100}%`}} className="h-full bg-safari"></div>
+                                <div className="flex-1 h-full bg-raftel"></div>
+                            </div>
+                            <div className="flex justify-between text-xs font-bold">
+                                <span className="text-safari">{formatFloat(stats.safari.avgDeals)}</span>
+                                <span className="text-gray-600">VS</span>
+                                <span className="text-raftel">{formatFloat(stats.raftel.avgDeals)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col lg:flex-row gap-8">
+                        
+                        {/* LEFT COLUMN: Charts */}
+                        <div className="w-full lg:w-2/3 space-y-8">
+                            
+                            {/* Trend Chart */}
+                            <div className="dashboard-card p-6">
+                                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                                    <Icon path={icons.trend} className="text-gray-500"/> 四半期別 1人あたり平均利益推移
+                                </h3>
+                                <div className="h-80 w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={trendData} margin={{ top: 20, right: 30, left: 10, bottom: 0 }}>
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
+                                            <XAxis dataKey="name" stroke="#94a3b8" />
+                                            <YAxis stroke="#94a3b8" tickFormatter={formatNumber} />
+                                            <Tooltip 
+                                                contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', color: '#f8fafc' }}
+                                                formatter={(value) => formatNumber(value)}
+                                            />
+                                            <Legend wrapperStyle={{paddingTop: '20px'}}/>
+                                            <Line type="monotone" name="ラフテル" dataKey="ラフテル" stroke="#00f0ff" strokeWidth={3} dot={{r: 4, fill: '#00f0ff'}} />
+                                            <Line type="monotone" name="Safari" dataKey="Safari" stroke="#facc15" strokeWidth={3} dot={{r: 4, fill: '#facc15'}} />
+                                        </LineChart>
+                                    </ResponsiveContainer>
                                 </div>
                             </div>
 
-                            {/* RIGHT COLUMN: Total Ranking */}
-                            <div className="w-full xl:w-1/3">
-                                <div className="sticky top-4 panel-border bg-black/95 h-[calc(100vh-2rem)] flex flex-col corner-deco border-2 border-gray-800">
-                                    <div className="p-6 border-b border-gray-800 bg-white/5 z-10">
-                                        <h2 className="text-2xl font-gaming text-white flex items-center gap-3 mb-4">
-                                            <Icon path={icons.crown} size={28} className="text-purple-500" /> 全90名総合ランキング
-                                        </h2>
-                                        <div className="relative">
-                                            <input 
-                                                type="text" 
-                                                placeholder="氏名検索..." 
-                                                className="w-full bg-black border border-gray-600 rounded-none px-4 py-3 pl-10 text-sm text-white focus:outline-none focus:border-safari transition-colors font-mono placeholder-gray-600"
-                                                value={searchTerm}
-                                                onChange={(e) => setSearchTerm(e.target.value)}
+                            {/* Top 10 Performers */}
+                            <div className="dashboard-card p-6">
+                                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                                    <Icon path={icons.trophy} className="text-gray-500"/> トップパフォーマー比較 (Top 10)
+                                </h3>
+                                <div className="h-[600px] w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart layout="vertical" data={top10Data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }} barGap={4}>
+                                            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#334155" />
+                                            <XAxis type="number" stroke="#94a3b8" tickFormatter={formatNumber} />
+                                            <YAxis dataKey="rank" type="category" stroke="#94a3b8" width={30} tickFormatter={(val) => `${val}位`} />
+                                            <Tooltip 
+                                                cursor={{fill: 'rgba(255,255,255,0.05)'}} 
+                                                contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', color: '#f8fafc' }} 
+                                                formatter={(value, name, props) => {
+                                                    const realName = name === "ラフテル" ? props.payload.raftelName : props.payload.safariName;
+                                                    return [`${realName}: ${formatNumber(value)}`, name];
+                                                }}
                                             />
-                                            <div className="absolute left-3 top-3 text-gray-500"><Icon path={icons.search} size={16} /></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="overflow-y-auto flex-1 p-0 custom-scrollbar">
-                                        <table className="w-full text-sm text-left border-collapse">
-                                            <thead className="text-gray-500 font-mono sticky top-0 bg-black z-10 border-b border-gray-800 shadow-md">
-                                                <tr>
-                                                    <th className="px-3 py-3 text-center w-12 bg-black font-bold">#</th>
-                                                    <th className="px-3 py-3 bg-black font-bold">氏名 / 所属</th>
-                                                    <th className="px-3 py-3 text-right bg-black font-bold">件数</th>
-                                                    <th className="px-3 py-3 text-right bg-black font-bold">純利益</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-gray-800/50">
-                                                {filteredMixed.map((row) => (
-                                                    <tr key={`${row.team}-${row.id}`} className="group hover:bg-white/10 transition-colors cursor-default">
-                                                        <td className="px-3 py-4 text-center">
-                                                            <span className={`inline-block w-8 h-8 leading-8 text-center clip-cut font-bold font-gaming text-lg ${
-                                                                row.rank <= 3 ? 'bg-purple-600 text-white shadow-[0_0_15px_#9333ea]' : 
-                                                                row.rank <= 10 ? 'bg-gray-700 text-white' : 'text-gray-600'
-                                                            }`}>
-                                                                {row.rank}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-3 py-4">
-                                                            <div className="font-bold text-white text-base mb-1">{row.name}</div>
-                                                            <span className={`text-[10px] px-2 py-0.5 rounded-none border ${
-                                                                row.team === 'safari' ? 'border-safari text-safari bg-safari/10' : 'border-raftel text-raftel bg-raftel/10'
-                                                            } font-mono font-bold tracking-wider`}>
-                                                                {row.team === 'safari' ? 'SAFARI' : 'RAFTEL'}
-                                                            </span>
-                                                        </td>
-                                                        <td className="px-3 py-4 text-right text-gray-500 font-mono text-sm">
-                                                            {row.deals ? formatNumber(row.deals) : '-'}
-                                                        </td>
-                                                        <td className="px-3 py-4 text-right font-display text-xl text-gray-400 group-hover:text-white transition-colors">
-                                                            {formatNumber(row.total)}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                            <Legend verticalAlign="top" height={36}/>
+                                            <Bar dataKey="raftelVal" name="ラフテル" fill="#00f0ff" barSize={16} radius={[0, 4, 4, 0]}>
+                                                <LabelList dataKey="raftelName" position="insideLeft" fill="#0f172a" fontSize={11} fontWeight="bold" />
+                                                <LabelList dataKey="raftelVal" position="right" fill="#00f0ff" fontSize={11} formatter={formatNumber} />
+                                            </Bar>
+                                            <Bar dataKey="safariVal" name="Safari" fill="#facc15" barSize={16} radius={[0, 4, 4, 0]}>
+                                                <LabelList dataKey="safariName" position="insideLeft" fill="#0f172a" fontSize={11} fontWeight="bold" />
+                                                <LabelList dataKey="safariVal" position="right" fill="#facc15" fontSize={11} formatter={formatNumber} />
+                                            </Bar>
+                                        </BarChart>
+                                    </ResponsiveContainer>
                                 </div>
                             </div>
 
                         </div>
+
+                        {/* RIGHT COLUMN: Table */}
+                        <div className="w-full lg:w-1/3">
+                            <div className="dashboard-card h-full flex flex-col overflow-hidden sticky top-6" style={{maxHeight: 'calc(100vh - 3rem)'}}>
+                                <div className="p-4 border-b border-gray-700 bg-slate-800/50">
+                                    <h3 className="text-lg font-bold text-white mb-3">全90名 総合ランキング</h3>
+                                    <div className="relative">
+                                        <input 
+                                            type="text" 
+                                            placeholder="名前で検索..." 
+                                            className="w-full bg-slate-900 border border-gray-600 rounded px-3 py-2 pl-9 text-sm text-white focus:outline-none focus:border-safari transition-colors"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                        <div className="absolute left-3 top-2.5 text-gray-500"><Icon path={icons.search} size={14} /></div>
+                                    </div>
+                                </div>
+                                
+                                <div className="overflow-y-auto flex-1 p-0">
+                                    <table className="w-full text-sm text-left border-collapse">
+                                        <thead className="text-gray-400 bg-slate-800/80 sticky top-0 z-10 backdrop-blur-sm border-b border-gray-700">
+                                            <tr>
+                                                <th className="px-3 py-3 text-center w-12 font-medium">順位</th>
+                                                <th className="px-3 py-3 font-medium">氏名 / 所属</th>
+                                                <th className="px-3 py-3 text-right font-medium">件数</th>
+                                                <th className="px-3 py-3 text-right font-medium">純利益</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-700/50">
+                                            {filteredMixed.map((row) => (
+                                                <tr key={`${row.team}-${row.id}`} className="table-row-hover transition-colors">
+                                                    <td className="px-3 py-3 text-center">
+                                                        <span className={`inline-block w-6 h-6 leading-6 text-center rounded text-xs font-bold ${
+                                                            row.rank <= 3 ? 'bg-safari text-slate-900' : 
+                                                            row.rank <= 10 ? 'bg-slate-600 text-white' : 'text-slate-500'
+                                                        }`}>
+                                                            {row.rank}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-3 py-3">
+                                                        <div className="font-bold text-white mb-0.5">{row.name}</div>
+                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                                                            row.team === 'safari' ? 'bg-safari/20 text-safari' : 'bg-raftel/20 text-raftel'
+                                                        }`}>
+                                                            {row.team === 'safari' ? 'Safari' : 'Raftel'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-3 py-3 text-right text-slate-400 font-mono text-xs">
+                                                        {row.deals ? formatNumber(row.deals) : '-'}
+                                                    </td>
+                                                    <td className="px-3 py-3 text-right font-bold text-slate-200 font-mono">
+                                                        {formatNumber(row.total)}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             );
