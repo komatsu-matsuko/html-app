@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html lang="ja"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Outlook × Lollipop 設定マニュアル</title> <script type="application/ld+json" id="ai-metadata"> { "@context": "http://schema.org", "@type": "HowTo", "name": "Outlook Email Setup", "tool": ["Outlook", "Lollipop Server"], "estimatedTime": "10M" } </script> <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> <style> :root { --primary: #FFE000; --primary-text: #111111; --accent-blue: #0063AF; --frame-color: #00508C; --success: #1e8e3e; --bg: #f8f9fa; --completed-bg: #C6E7FA; --surface: #ffffff; --border: #dadce0; } body { font-family: 'Google Sans', Roboto, Arial, sans-serif; background-color: var(--bg); color: #202124; line-height: 1.6; margin: 0; padding: 40px 20px 160px 20px; transition: background-color 1.5s ease; } body.completed { background-color: var(--completed-bg) !important; } .container { max-width: 900px; margin: 0 auto; }
+
+/* Header & Diagram & KeyBox */
+header { text-align: center; background: white; padding: 50px 30px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 40px; border-top: 10px solid var(--primary); overflow: hidden; }
+.mission-label { background: var(--primary); color: var(--primary-text); display: inline-block; padding: 5px 15px; border-radius: 99px; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 15px; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+h1 { margin: 0; color: #111; font-size: 32px; letter-spacing: 0.05em; line-height: 1.3; font-weight: 900; }
+.title-sub { font-size: 16px; color: #5f6368; display: block; margin-top: 10px; font-weight: normal; }
+.diagram-wrapper { background: white; padding: 30px 20px; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.diagram-title { text-align: center; font-weight: 900; color: var(--accent-blue); margin-bottom: 30px; font-size: 18px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.diagram-container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.d-step { flex: 1; min-width: 100px; text-align: center; position: relative; z-index: 2; }
+.d-icon-box { width: 70px; height: 70px; background: #f0f4f8; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 32px; color: var(--frame-color); border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s; }
+.d-step:hover .d-icon-box { transform: scale(1.1); color: var(--accent-blue); }
+.d-icon-box.highlight { background: var(--primary); color: #111; border-color: var(--primary); }
+.d-label { font-weight: 900; font-size: 14px; color: #333; margin-bottom: 5px; }
+.d-desc { font-size: 11px; color: #666; line-height: 1.4; }
+.d-arrow { flex: 0 0 30px; height: 2px; background: #ddd; position: relative; }
+.d-arrow::after { content: ""; position: absolute; right: 0; top: -4px; border-left: 6px solid #ddd; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+.key-box { background: #fff; border: 2px solid var(--primary); border-radius: 12px; padding: 25px; margin-bottom: 40px; box-shadow: 0 4px 0 rgba(0,0,0,0.05); }
+.key-title { font-weight: 900; font-size: 18px; color: #111; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+.key-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.key-item { background: #f8f9fa; border: 1px solid #ccc; padding: 10px 15px; border-radius: 8px; font-size: 13px; font-family: monospace; display: flex; align-items: center; gap: 8px; color: #111; font-weight: bold; }
+.key-item .material-icons { color: var(--frame-color); }
+
+/* Content & Steps */
+.section { background: white; border-radius: 12px; padding: 30px; margin-bottom: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+h2 { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-top: 0; color: #3c4043; }
+.step-badge { background: var(--primary); color: var(--primary-text); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+/* Interactive Elements & Tooltip */
+.ui-mockup { background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 0; margin: 20px 0; font-family: Arial, sans-serif; font-size: 13px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.ui-header { background: #f1f3f4; padding: 8px 15px; border-bottom: 1px solid #ccc; color: #5f6368; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+.ui-body { padding: 15px; }
+
+.term { border-bottom: 2px dotted #0063AF; cursor: help; position: relative; color: #0063AF; font-weight: bold; transition: all 0.2s; }
+.term:hover { background: #e8f0fe; }
+.term:hover::after { content: attr(data-tooltip); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #202124; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; white-space: nowrap; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.2); line-height: 1.4; }
+.term:hover::before { content: ""; position: absolute; bottom: 100%; left: 50%; margin-left: -5px; border-width: 5px; border-style: solid; border-color: #202124 transparent transparent transparent; z-index: 1000; }
+
+/* Mockups (Shared) */
+.menu-bar { display: flex; gap: 15px; color: #444; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px;}
+.menu-item.active { background: #e8f0fe; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+.dropdown { border: 1px solid #ccc; width: 200px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border-radius: 4px; margin-top: 5px; margin-left: 20px; }
+.dropdown-item { padding: 8px 15px; display: flex; align-items: center; gap: 8px; }
+.dropdown-item.target { background: #e8f0fe; color: #1a73e8; font-weight: bold; }
+.lib-layout { display: flex; height: 160px; }
+.lib-sidebar { width: 180px; background: #f8f9fa; border-right: 1px solid #eee; padding: 10px; }
+.lib-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; color: #3c4043; font-weight: 500; font-size: 12px;}
+.lib-main { flex: 1; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.lib-input { width: 100%; padding: 8px; border: 1px solid #1a73e8; border-radius: 4px; font-family: monospace; background: #fff; color: #333; }
+.sheet-mockup { border: 1px solid #c0c0c0; background: #fff; font-family: Arial, sans-serif; font-size: 12px; color: #333; margin: 20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; }
+.sheet-toolbar { background: #f8f9fa; padding: 8px 15px; border-bottom: 1px solid #e0e0e0; display: flex; gap: 15px; color: #5f6368; font-size: 11px; }
+.sheet-grid { display: grid; grid-template-columns: 40px repeat(10, 1fr); border-collapse: collapse; }
+.sheet-cell { border-right: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; padding: 6px 8px; white-space: nowrap; overflow: hidden; }
+.sheet-header-col { background: #f8f9fa; font-weight: bold; text-align: center; color: #5f6368; border-bottom: 2px solid #ccc; }
+.sheet-header-row { background: #f8f9fa; font-weight: bold; text-align: center; color: #5f6368; }
+.sheet-data-header { font-weight: bold; background: #fff; border-bottom: 2px solid #1a73e8; color: #333; }
+.sheet-tabs { background: #f1f3f4; padding: 0; border-top: 1px solid #e0e0e0; display: flex; align-items: flex-end; height: 35px; }
+.sheet-tab { background: #fff; padding: 8px 25px; border-radius: 5px 5px 0 0; color: #1a73e8; font-weight: bold; box-shadow: 0 -1px 3px rgba(0,0,0,0.05); margin-left: 50px; position: relative; }
+.pointer { position: absolute; left: -50px; top: 10px; color: #d93025; font-weight: bold; animation: bounce 1s infinite; }
+@keyframes bounce { 0%, 100% {transform:translateX(0);} 50% {transform:translateX(5px);} }
+.exec-toolbar { background: #fff; border-bottom: 1px solid #dadce0; padding: 10px; display: flex; align-items: center; gap: 15px; border-radius: 8px 8px 0 0; border: 1px solid #ccc; }
+.exec-dropdown { background: #fff; border: 1px solid #dadce0; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #3c4043; min-width: 120px; display: flex; justify-content: space-between; align-items: center; }
+.exec-btn { background: #fff; color: #3c4043; border: 1px solid #dadce0; border-radius: 4px; padding: 6px 15px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+.exec-btn:hover { background: #f8f9fa; color: #1a73e8; }
+
+/* Code & Copy */
+.code-wrapper { position: relative; margin-top: 15px; }
+.copy-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 5px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; z-index: 10; }
+.copy-btn:hover { background: rgba(255,255,255,0.25); }
+.copy-btn.copied { background: var(--success); border-color: var(--success); }
+.code-block { background: #282c34; color: #abb2bf; padding: 40px 20px 20px 20px; border-radius: 8px; overflow-x: auto; font-family: Consolas, monospace; font-size: 12px; }
+.id-box { background: #f0f7ff; border: 2px solid #0063AF; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; }
+.id-value { font-family: monospace; font-weight: bold; font-size: 14px; color: #0063AF; display: block; margin-bottom: 5px; word-break: break-all; }
+
+/* Task & Progress */
+.task-item { display: flex; align-items: center; gap: 15px; padding: 12px; border: 1px solid #eee; border-radius: 8px; margin-top: 10px; cursor: pointer; transition: background 0.2s; background: #fff; }
+.task-item:hover { background: #f0f7ff; }
+.task-checkbox { width: 22px; height: 22px; border: 2px solid var(--success); border-radius: 6px; background: white; display: flex; align-items: center; justify-content: center; color: var(--success); font-weight: bold; font-size: 16px; transition: all 0.2s; }
+.task-item.checked { background: #e6f4ea; border-color: var(--success); }
+.task-item.checked .task-checkbox { background: var(--success); color: white; }
+.task-item.checked .task-checkbox::after { content: "✔"; }
+
+/* Footer & Admin */
+.footer-actions { text-align: center; margin-top: 80px; padding-top: 30px; border-top: 1px dashed #ddd; }
+.fix-btn { background: #f8f9fa; border: 1px solid #ddd; color: #5f6368; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+.fix-btn:hover { background: #333; color: white; border-color: #333; }
+
+/* Error & Gemini */
+.error-guide { background: #fff; border: 1px solid #e0e0e0; padding: 20px; margin-top: 30px; border-radius: 8px; }
+.console-mockup { background: #ffffff; color: #333; padding: 0; font-family: Consolas, monospace; font-size: 12px; border-radius: 4px; margin: 10px 0; border: 1px solid #dadce0; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+.console-header { background: #f1f3f4; padding: 5px 10px; border-bottom: 1px solid #e0e0e0; color: #5f6368; font-size: 11px; font-weight: bold; }
+.console-body { padding: 10px; line-height: 1.5; }
+.log-info { color: #5f6368; margin-bottom: 4px; }
+.log-error { color: #d93025; background: #fce8e6; display: block; width: 100%; padding: 2px 0; }
+.gemini-box { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-top: 15px; }
+.gemini-header { display: flex; align-items: center; gap: 8px; font-weight: bold; color: #4285f4; margin-bottom: 10px; }
+.prompt-box { background: #fff; padding: 10px; border-radius: 8px; font-size: 12px; color: #333; border:1px solid #ddd; }
+.privacy-badge { display: inline-block; background: #e8eaed; color: #5f6368; font-size: 10px; padding: 3px 8px; border-radius: 10px; margin-left: auto; }
+
+.progress-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 800px; height: 60px; z-index: 1000; display: flex; align-items: center; pointer-events: none; }
+.progress-frame { width: 100%; height: 24px; background: var(--frame-color); border-radius: 999px; border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; }
+.progress-bar { width: 0%; height: 100%; background: var(--primary); border-radius: 999px; transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
+.progress-char { position: absolute; right: -25px; top: -38px; width: 50px; height: 50px; transition: right 0.5s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+.progress-char img { width: 100%; height: 100%; object-fit: contain; }
+.confetti { position: fixed; width: 10px; height: 10px; background-color: #f00; animation: fall linear forwards; z-index: 9999; pointer-events: none; }
+@keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+</style> </head> <body>
+
+<div class="container"> <header> <span class="mission-label">OUTLOOK × LOLLIPOP</span> <h1>Outlook メール設定完全ガイド</h1> <span class="title-sub">ロリポップ！サーバー設定をOutlookに反映し、快適なメール環境を構築します</span> </header>
+
+<div class="diagram-wrapper">
+    <div class="diagram-title">
+        <span class="material-icons">architecture</span> 設定の全体像
+    </div>
+    <div class="diagram-container">
+        <div class="d-step">
+            <div class="d-icon-box">
+                <span class="material-icons">dns</span>
+            </div>
+            <div class="d-label">ロリポップ！</div>
+            <div class="d-desc">メールサーバー</div>
+        </div>
+        <div class="d-arrow"></div>
+        <div class="d-step">
+            <div class="d-icon-box highlight">
+                <span class="material-icons">settings_ethernet</span>
+            </div>
+            <div class="d-label">接続設定</div>
+            <div class="d-desc">今回の作業</div>
+        </div>
+        <div class="d-arrow"></div>
+        <div class="d-step">
+            <div class="d-icon-box">
+                <span class="material-icons">laptop_mac</span>
+            </div>
+            <div class="d-label">Outlook</div>
+            <div class="d-desc">メール送受信</div>
+        </div>
+    </div>
+</div>
+
+<div class="key-box">
+    <div class="key-title">
+        <span class="material-icons">inventory_2</span> 必要情報（お手元の資料と照合）
+    </div>
+    <p style="font-size:12px; color:#666; margin-top:0; margin-bottom:15px;">※IDとパスワードは、別途送付された個別の情報を使用してください。</p>
+    <div class="key-list">
+        <div class="key-item">
+            <span class="material-icons">email</span> メールアドレス
+        </div>
+        <div class="key-item">
+            <span class="material-icons">vpn_key</span> パスワード
+        </div>
+        <div class="key-item">
+            <span class="material-icons">login</span> 受信: <span style="user-select:all; cursor:pointer;" onclick="copyLibId(this)">imap.lolipop.jp</span>
+        </div>
+        <div class="key-item">
+            <span class="material-icons">logout</span> 送信: <span style="user-select:all; cursor:pointer;" onclick="copyLibId(this)">smtp.lolipop.jp</span>
+        </div>
+    </div>
+</div>
+
+<div class="section" data-ai-type="step">
+    <h2><div class="step-badge">1</div>Outlookを起動してアカウント追加</h2>
+    <p>Outlookを開き、新しいアカウントを追加します。最初の画面が異なる場合でも「ファイル」メニューから進めます。</p>
+    
+    <div class="ui-mockup" data-ai-type="ui-simulation">
+        <div class="ui-header">Outlook - ホーム画面</div>
+        <div class="ui-body">
+            <div class="menu-bar">
+                <div class="menu-item active">ファイル 👈</div>
+                <div class="menu-item">ホーム</div>
+                <div class="menu-item">送受信</div>
+            </div>
+            <div style="background:#f1f3f4; padding:20px; border:1px dashed #ccc; text-align:center;">
+                <div style="font-weight:bold; color:#1a73e8; margin-bottom:10px;">アカウント情報</div>
+                <button style="background:#fff; border:1px solid #ccc; padding:10px 20px; font-weight:bold; cursor:pointer;">
+                    <span class="material-icons" style="vertical-align:middle; font-size:16px;">add</span> アカウントの追加 👈 Click
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="task-item" onclick="toggleTask(this)">
+        <div class="task-checkbox"></div>
+        <div>「アカウントの追加」ボタンをクリックした</div>
+    </div>
+</div>
+
+<div class="section" data-ai-type="step">
+    <h2><div class="step-badge">2</div>メールアドレスの入力と詳細設定</h2>
+    <p><strong>ここが最重要ポイントです。</strong>自動設定ではなく、必ず「手動設定」を選択してください。</p>
+
+    <div class="ui-mockup" data-ai-type="ui-simulation">
+        <div class="ui-header">Outlook - アカウントの追加</div>
+        <div class="ui-body" style="text-align:center; padding:30px;">
+            <label style="display:block; text-align:left; font-size:12px; font-weight:bold; margin-bottom:5px; max-width:300px; margin-left:auto; margin-right:auto;">メールアドレス</label>
+            <input type="text" placeholder="sample@your-domain.com" style="width:100%; max-width:300px; padding:10px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;">
+            
+            <div style="max-width:300px; margin:0 auto; text-align:left; background:#fffbe6; padding:10px; border:1px solid #ffe000; border-radius:4px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; font-weight:bold; color:#d93025; cursor:pointer;">
+                    <span class="material-icons" style="font-size:18px;">check_box</span>
+                    自分で自分のアカウントを手動で設定する 👈 必須！
+                </label>
+            </div>
+
+            <button style="margin-top:20px; background:#0063AF; color:white; border:none; padding:10px 40px; border-radius:4px;">接続</button>
+        </div>
+    </div>
+
+    <div class="task-item" onclick="toggleTask(this)">
+        <div class="task-checkbox"></div>
+        <div>「自分で自分のアカウントを手動で設定する」にチェックを入れた</div>
+    </div>
+</div>
+
+<div class="section" data-ai-type="step">
+    <h2><div class="step-badge">3</div>アカウントの種類の選択</h2>
+    <p>複数のデバイス（スマホとPCなど）でメールを確認する場合は、<span class="term" data-tooltip="【IMAPとは】メールをサーバー上に保存し、複数の端末で同期する方式。スマホでもPCでも同じ状態が見れます。">IMAP</span>を選択します。</p>
+
+    <div class="ui-mockup" data-ai-type="ui-simulation">
+        <div class="ui-header">詳細設定</div>
+        <div class="ui-body" style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap;">
+            <div style="border:2px solid #0063AF; background:#e8f0fe; padding:20px; width:80px; text-align:center; border-radius:8px; cursor:pointer;">
+                <span class="material-icons" style="font-size:32px; color:#0063AF;">mail</span><br>
+                <span style="font-weight:bold; color:#0063AF;">IMAP 👈</span>
+            </div>
+            <div style="border:1px solid #ccc; padding:20px; width:80px; text-align:center; border-radius:8px; opacity:0.6;">
+                <span class="material-icons" style="font-size:32px; color:#666;">local_post_office</span><br>
+                <span style="font-weight:bold; color:#666;">POP</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="task-item" onclick="toggleTask(this)">
+        <div class="task-checkbox"></div>
+        <div>「IMAP」アイコンを選択した</div>
+    </div>
+</div>
+
+<div class="section" data-ai-type="step">
+    <h2><div class="step-badge">4</div>サーバー情報の入力（最終関門）</h2>
+    <p>以下の画面の通りに、サーバー名と<span class="term" data-tooltip="【ポート番号とは】情報の出入り口の番号。間違えると接続できません。">ポート番号</span>を正確に入力してください。ここを乗り越えれば完了です。</p>
+
+    <div class="ui-mockup" data-ai-type="ui-simulation">
+        <div class="ui-header">IMAP アカウントの設定</div>
+        <div class="ui-body" style="font-size:12px;">
+            <div style="margin-bottom:20px; border-bottom:1px dashed #ccc; padding-bottom:15px;">
+                <strong style="display:block; margin-bottom:10px; color:#1e8e3e;">▼ 受信メール (IMAP)</strong>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div>
+                        サーバー: <span style="font-weight:bold; color:#0063AF; background:#e8f0fe; padding:2px 5px;">imap.lolipop.jp</span>
+                    </div>
+                    <div>
+                        ポート: <span style="font-weight:bold; color:#d93025; border:1px solid #d93025; padding:2px 5px; border-radius:3px;">993</span> 👈
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        暗号化方法: <span style="font-weight:bold;">SSL/TLS</span> 👈
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <strong style="display:block; margin-bottom:10px; color:#E76112;">▼ 送信メール (SMTP)</strong>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div>
+                        サーバー: <span style="font-weight:bold; color:#0063AF; background:#e8f0fe; padding:2px 5px;">smtp.lolipop.jp</span>
+                    </div>
+                    <div>
+                        ポート: <span style="font-weight:bold; color:#d93025; border:1px solid #d93025; padding:2px 5px; border-radius:3px;">465</span> 👈
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        暗号化方法: <span style="font-weight:bold;">SSL/TLS</span> 👈
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align:right; margin-top:20px;">
+                <button style="background:#0063AF; color:white; border:none; padding:8px 25px; border-radius:4px;">次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="key-box" style="padding:15px; background:#fffbe6; border-color:#ffe000;">
+        <div style="font-weight:bold; margin-bottom:10px; font-size:13px;">⚠️ 注意：ポート番号と暗号化</div>
+        <ul style="margin:0; padding-left:20px; font-size:12px;">
+            <li>受信ポートは必ず <strong>993</strong></li>
+            <li>送信ポートは必ず <strong>465</strong></li>
+            <li>暗号化は両方とも <strong>SSL/TLS</strong> を選択</li>
+        </ul>
+    </div>
+
+    <div class="task-item" onclick="toggleTask(this)">
+        <div class="task-checkbox"></div>
+        <div>サーバー名とポート番号を全て正しく入力した</div>
+    </div>
+    <div class="task-item" onclick="toggleTask(this)">
+        <div class="task-checkbox"></div>
+        <div>最後にパスワードを入力し、設定完了画面が出た</div>
+    </div>
+</div>
+
+<div class="footer-actions">
+    <button class="fix-btn" onclick="copyHtmlForUpdate()">
+        <span class="material-icons" style="font-size:14px;">update</span> 管理者用：最新環境へアップデート
+    </button>
+    <p style="margin-top:5px; font-size:10px;">現在のコードと更新用プロンプトをコピーします。</p>
+</div>
+</div>
+
+<div class="progress-container"> <div class="progress-frame"> <div class="progress-bar" id="progressBar"> <div class="progress-char"> <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e3818ae38198e382ade383a3e38383e38388-e9a194e381a0e38191.png" alt="cat"> </div> </div> </div> </div>
+
+<script> let totalTasks = 0; let completedTasks = 0; function init() { totalTasks = document.querySelectorAll('.task-item').length; updateProgress(); } function toggleTask(el) { if (el.classList.contains('checked')) { el.classList.remove('checked'); completedTasks--; } else { el.classList.add('checked'); completedTasks++; } updateProgress(); } function updateProgress() { const pct = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100); const bar = document.getElementById('progressBar'); bar.style.width = pct + '%'; if (pct === 100) celebrate(); } function celebrate() { if (document.body.classList.contains('completed')) return; document.body.classList.add('completed'); createConfetti(); } function copyCode(btn) { const code = btn.nextElementSibling.innerText; navigator.clipboard.writeText(code).then(() => { const originalText = btn.innerHTML; btn.innerHTML = '<span class="material-icons" style="font-size:14px;">check</span> 完了'; btn.classList.add('copied'); setTimeout(() => { btn.innerHTML = originalText; btn.classList.remove('copied'); }, 2000); }); } function copyLibId(btn) { const id = btn.previousElementSibling.innerText; navigator.clipboard.writeText(id).then(() => { const originalText = btn.innerHTML; btn.innerHTML = '<span class="material-icons" style="font-size:14px;">check</span> コピー'; btn.style.background = '#1e8e3e'; setTimeout(() => { btn.innerHTML = originalText; btn.style.background = '#0063AF'; }, 2000); }); } function copyHtmlForUpdate() { const html = document.documentElement.outerHTML; const prompt = "【修正依頼】\n以下のHTMLマニュアルを、最新のGoogle Workspace/GASの仕様に合わせて全手順を見直し、アップデートしてください。\nデザインや構成は絶対に変更せず、テキストやスクリプトの中身だけを最新化してください。\n\n--- HTML Code ---\n" + html; navigator.clipboard.writeText(prompt).then(() => { alert("管理者用：更新プロンプトをコピーしました！\n\nGeminiに貼り付けて、最新化を実行してください。"); }); } function createConfetti() { const colors = ['#FFE000', '#009DD5', '#E76112', '#FFFFFF']; for (let i = 0; i < 150; i++) { const conf = document.createElement('div'); conf.classList.add('confetti'); conf.style.left = Math.random() * 100 + 'vw'; conf.style.top = -10 + 'px'; conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; conf.style.animationDuration = (Math.random() * 3 + 2) + 's'; document.body.appendChild(conf); } } window.onload = init; </script>
+
+</body> </html>
