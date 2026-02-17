@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3時の図書室 | 思い出の行き先案内所 - 法人向け案内</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500;600;700;900&family=Shippori+Mincho:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Jost"', '"Shippori Mincho"', 'sans-serif'],
+                        serif: ['"Zen Old Mincho"', 'serif'],
+                    },
+                    colors: {
+                        'brand-bg': '#FAF5EA',
+                        'brand-text': '#4A3424',
+                        'brand-text-light': '#8C705F',
+                        'brand-accent': '#B08040',
+                        'brand-accent-light': '#E8D4A0',
+                        'brand-green': '#4A7858',
+                        'brand-red': '#A04040',
+                        'bg-surface': '#FFFFFF',
+                    },
+                    letterSpacing: {
+                        'widest-jp': '0.15em',
+                        'ultra-wide': '0.25em',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in-up': 'fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'scroll': 'scroll 60s linear infinite',
+                        'scroll-reverse': 'scrollReverse 60s linear infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        scroll: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-33.33%)' },
+                        },
+                        scrollReverse: {
+                            '0%': { transform: 'translateX(-33.33%)' },
+                            '100%': { transform: 'translateX(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAF5EA;
+            color: #4A3424;
+            font-feature-settings: "palt" 1;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .bg-paper {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background-color: #FAF5EA;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            opacity: 0.9;
+        }
+        
+        .bg-noise {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 4px 30px rgba(74, 52, 36, 0.03);
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 10px 40px rgba(74, 52, 36, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .writing-vertical {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            letter-spacing: 0.25em;
+            line-height: 2.4;
+        }
+
+        .chapter-badge {
+            display: inline-block;
+            font-family: "Jost", "Zen Old Mincho", sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #B08040;
+            border-bottom: 1px solid rgba(176, 128, 64, 0.3);
+            padding-bottom: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .reveal-img-container {
+            overflow: hidden;
+            position: relative;
+        }
+        .reveal-img-container img {
+            transform: scale(1.1);
+            transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .reveal-img-container.is-visible img {
+            transform: scale(1);
+        }
+
+        .csr-slider-image {
+            width: 280px;
+            height: 180px;
+            flex-shrink: 0;
+            border-radius: 4px;
+            overflow: hidden;
+            filter: sepia(0.15);
+            transition: filter 0.3s;
+        }
+        .csr-slider-image:hover {
+            filter: sepia(0);
+        }
+
+        .logo-blur {
+            filter: blur(5px) grayscale(0.5) opacity(0.7);
+            transition: filter 0.5s ease;
+        }
+        .logo-blur:hover {
+            filter: blur(3px) grayscale(0) opacity(1);
+        }
+
+        .nav-link-elegant {
+            position: relative;
+            padding-bottom: 4px;
+            color: #4A3424;
+            transition: color 0.4s ease;
+        }
+        .nav-link-elegant::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background-color: #B08040;
+            transition: all 0.4s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link-elegant:hover {
+            color: #B08040;
+        }
+        .nav-link-elegant:hover::after {
+            width: 100%;
+        }
+        
+        .antique-frame {
+            position: relative;
+            background: #fff;
+            padding: 24px;
+            box-shadow: 
+                0 10px 30px -5px rgba(0, 0, 0, 0.05), 
+                inset 0 0 0 1px #f0f0f0;
+            transition: all 0.5s ease;
+        }
+        .antique-frame:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+        }
+        .antique-frame::before {
+            content: '';
+            position: absolute;
+            top: 12px; left: 12px; right: 12px; bottom: 12px;
+            border: 1px solid #e8e8e8;
+            pointer-events: none;
+        }
+        
+        .perspective-2000 {
+            perspective: 2000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .hero-text-shadow {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .filter-sepia-brown {
+            filter: sepia(0.7) grayscale(0.4) contrast(1.1) brightness(0.95);
+        }
+        .group:hover .filter-sepia-brown {
+            filter: sepia(0) grayscale(0) contrast(1) brightness(1);
+        }
+
+        #loader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: #FAF5EA;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .loader-logo {
+            width: 360px;
+            height: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease-out;
+        }
+
+        .loader-bar-bg {
+            width: 360px;
+            height: 1px;
+            background-color: rgba(74, 52, 36, 0.1);
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loader-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background-color: #B08040;
+            transition: width 1.5s ease-in-out;
+        }
+
+        .loader-text {
+            font-family: "Jost", sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            color: #B08040;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Sparkle Effect */
+        .sparkle-container {
+            position: absolute;
+            inset: -40px;
+            pointer-events: none;
+            z-index: 100;
+            overflow: visible;
+        }
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #FFD700 0%, #B08040 40%, transparent 70%);
+            box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.6);
+            opacity: 0;
+        }
+        .sparkle::after {
+            content: '✦';
+            position: absolute;
+            top: -4px;
+            left: -2px;
+            font-size: 10px;
+            color: #FFD700;
+            text-shadow: 0 0 4px rgba(255, 215, 0, 0.8);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-accent selection:text-white">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e383ade382b4e9808fe9818e-1.png" alt="Logo" class="loader-logo">
+        <div class="loader-bar-bg">
+            <div class="loader-bar"></div>
+        </div>
+        <p class="loader-text">LOADING...</p>
+    </div>
+
+    <!-- Contact Modal (3D Book) -->
+    <div id="contact-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center perspective-2000">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0 modal-overlay" onclick="closeContact()"></div>
+        <div id="book-container" class="relative w-[90%] md:w-[800px] aspect-[1.5/1] md:aspect-[1.6/1] opacity-0 z-10">
+            <div id="book" class="relative w-full h-full transform-style-3d">
+                <div id="book-cover" class="absolute top-0 right-0 w-1/2 h-full z-50 origin-left transform-style-3d cursor-pointer shadow-2xl rounded-r-md">
+                    <div class="absolute inset-0 bg-[#4A3424] backface-hidden rounded-r-md border-l-2 border-[#3a281c] flex flex-col items-center justify-center overflow-hidden">
+                        <div class="absolute inset-4 border border-[#B08040] rounded-r-sm opacity-60"></div>
+                        <div class="absolute inset-6 border border-[#B08040] rounded-r-sm opacity-30"></div>
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e383ade382b4e9808fe9818e-1.png" alt="3時の図書室" class="w-2/3 h-auto object-contain drop-shadow-md relative z-10">
+                        <p class="mt-8 text-[#E8D4A0] text-[10px] tracking-[0.4em] font-serif opacity-80">CONTACT BOOK</p>
+                    </div>
+                    <div class="absolute inset-0 bg-[#FAF5EA] backface-hidden [transform:rotateY(180deg)] rounded-l-md border-r border-[#B08040]/20 overflow-hidden">
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-80 pointer-events-none"></div>
+                        <div class="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/10 to-transparent pointer-events-none"></div>
+                    </div>
+                </div>
+                <!-- Thank You Page (底面 - フォーム送信後に見える) -->
+                <div id="thankyou-page" class="absolute top-0 right-0 w-1/2 h-full bg-[#FAF5EA] rounded-r-md shadow-xl z-10 p-8 md:p-12 flex flex-col items-center justify-center">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-80 pointer-events-none rounded-r-md"></div>
+                    <button onclick="closeContact()" class="absolute top-4 right-4 text-brand-text/30 hover:text-brand-red transition-colors z-20 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    <div class="relative z-10 text-center px-6">
+                        <div class="text-4xl mb-6">📖</div>
+                        <h3 class="font-serif text-lg md:text-xl font-bold text-brand-text mb-4 whitespace-nowrap">お問い合わせを承りました</h3>
+                        <div class="w-12 h-[1px] bg-brand-accent mx-auto mb-5"></div>
+                        <p class="text-xs md:text-sm text-brand-text-light leading-relaxed whitespace-nowrap">
+                            3営業日以内に担当者より<br class="md:hidden">ご連絡いたします。
+                        </p>
+                        <p class="text-[10px] md:text-xs text-brand-text-light/70 mt-3 whitespace-nowrap">
+                            しばらくお待ちくださいませ。
+                        </p>
+                    </div>
+                    <div class="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/10 to-transparent pointer-events-none"></div>
+                </div>
+
+                <!-- Form Page (上面 - 捲れるページ) -->
+                <div id="form-page" class="absolute top-0 right-0 w-1/2 h-full z-20 origin-left transform-style-3d">
+                    <div class="absolute inset-0 bg-[#FAF5EA] backface-hidden rounded-r-md shadow-xl p-8 md:p-12 flex flex-col justify-center overflow-y-auto">
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] opacity-80 pointer-events-none rounded-r-md"></div>
+                        <button onclick="closeContact()" class="absolute top-4 right-4 text-brand-text/30 hover:text-brand-red transition-colors z-20 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <div class="relative z-10">
+                            <form id="contact-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-brand-text mb-1 tracking-widest">お名前</label>
+                                    <input type="text" name="name" required class="w-full bg-white/50 border-b border-brand-text/20 py-2 pl-2 focus:outline-none focus:border-brand-accent transition-colors placeholder-brand-text/30 text-sm cursor-text">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-brand-text mb-1 tracking-widest">貴社名・施設名</label>
+                                    <input type="text" name="company" class="w-full bg-white/50 border-b border-brand-text/20 py-2 pl-2 focus:outline-none focus:border-brand-accent transition-colors placeholder-brand-text/30 text-sm cursor-text">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-brand-text mb-1 tracking-widest">お問い合わせ内容</label>
+                                    <textarea name="message" rows="3" required class="w-full bg-white/50 border border-brand-text/20 p-2 pl-2 rounded-sm focus:outline-none focus:border-brand-accent transition-colors placeholder-brand-text/30 text-sm resize-none cursor-text"></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-brand-text text-white py-3 mt-2 text-[10px] tracking-widest hover:bg-brand-accent transition-colors shadow-sm cursor-pointer">
+                                    送信する
+                                </button>
+                            </form>
+                        </div>
+                        <div class="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/10 to-transparent pointer-events-none"></div>
+                    </div>
+                    <div class="absolute inset-0 bg-[#F5F0E5] backface-hidden [transform:rotateY(180deg)] rounded-l-md border-r border-brand-text/10"></div>
+                </div>
+            </div>
+            <!-- Sparkle Container -->
+            <div id="sparkle-container" class="sparkle-container"></div>
+        </div>
+    </div>
+
+    <div class="bg-paper"></div>
+    <div class="bg-noise"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-[#B08040]/10 transition-all duration-500 shadow-[0_2px_20px_rgba(0,0,0,0.02)]">
+        <div class="w-full mx-auto px-4 md:px-8 h-24 flex items-center justify-between">
+            <a href="#" class="flex items-center opacity-90 hover:opacity-100 transition-opacity">
+                <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e383ade382b4e9808fe9818e-1.png" alt="3時の図書室" class="h-12 md:h-14 w-auto object-contain">
+            </a>
+            
+            <div class="hidden lg:flex items-center gap-10 text-sm font-serif font-medium tracking-ultra-wide text-brand-text">
+                <a href="#brand" class="nav-link-elegant">想い</a>
+                <a href="#merit" class="nav-link-elegant">メリット</a>
+                <a href="#plans" class="nav-link-elegant">プラン</a>
+                <a href="#products" class="nav-link-elegant">商材</a>
+                <a href="#safety" class="nav-link-elegant">安全管理</a>
+                <a href="#business" class="nav-link-elegant">実績</a>
+            </div>
+            
+            <a href="#" onclick="openContact(event)" class="contact-trigger hidden md:flex items-center px-8 py-3 rounded-sm bg-brand-text text-white font-serif text-xs tracking-widest hover:bg-brand-accent transition-all duration-500 shadow-md hover:shadow-lg">
+                お問い合わせ
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative w-full h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382ade383bce38393e382b8e383a5e382a2e383abe6a8aa-2-1.png" 
+                 alt="Main Visual" 
+                 class="w-full h-full object-cover"
+            >
+            <div class="absolute inset-0 z-[1] bg-gradient-to-b from-black/10 via-transparent to-brand-bg/50"></div>
+        </div>
+
+        <div id="canvas-container" class="absolute inset-0 z-10 pointer-events-none opacity-40"></div>
+        
+        <div class="absolute top-[30%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20 text-center w-full max-w-5xl px-4 pointer-events-none">
+            <div class="inline-block opacity-0 animate-fade-in-up delay-300">
+                <h1 class="font-serif text-3xl md:text-4xl lg:text-6xl font-bold tracking-[0.2em] leading-relaxed text-white hero-text-shadow drop-shadow-lg">
+                    ここは、<br>
+                    思い出の行き先案内所。
+                </h1>
+                
+                <div class="mt-6 flex justify-center">
+                    <p class="text-white text-sm md:text-base tracking-[0.15em] font-medium border-t border-white/60 inline-block pt-6 px-8 drop-shadow-md hero-text-shadow">
+                        商業施設に、文化と価値の循環を生む<br class="md:hidden">新しい買取のカタチ。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float opacity-80 z-20">
+            <span class="block text-xs tracking-widest text-brand-text mb-2 text-center font-bold">SCROLL</span>
+            <svg class="w-6 h-6 text-brand-text mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+    </header>
+
+    <!-- Concept Section -->
+    <section class="py-32 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-center gap-12 md:gap-32">
+                <div class="md:order-2 w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl relative z-10 border-[6px] border-white/40">
+                    <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771071584191.png" alt="Concept Visual" class="w-full h-full object-cover">
+                </div>
+                <div class="md:order-1 flex gap-12 justify-center h-[500px]">
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-brand-text writing-vertical gsap-text-reveal leading-loose relative">
+                        「編集」という名の<br>買取サービス。
+                    </h2>
+                    <div class="font-serif text-brand-text-light writing-vertical text-sm md:text-base tracking-widest text-justify delay-100 concept-text-container">
+                        <span class="concept-line inline-block opacity-0 translate-y-4">書店は知識や感動を媒介する場所です。</span><br>
+                        <span class="concept-line inline-block opacity-0 translate-y-4">読み終えた本、聴き終えたレコードは</span><br>
+                        <span class="concept-line inline-block opacity-0 translate-y-4">不用品ではなく、人生を彩った「文化資産」。</span><br>
+                        <span class="concept-line inline-block opacity-0 translate-y-4">私たちは敬意を持って、その価値を紡ぎます。</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-[8%] left-[15%] text-[12rem] text-brand-text opacity-10 font-serif pointer-events-none select-none">本</div>
+    </section>
+
+    <!-- Chapter 1: Brand Promise -->
+    <section id="brand" class="py-32 bg-white/50 border-t border-brand-text/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col lg:flex-row gap-24 items-center">
+                <div class="flex-1 gsap-fade-up order-2 lg:order-1 flex flex-col justify-center px-4 lg:pl-16 lg:pr-8">
+                    <span class="chapter-badge">Chapter 01 ── Brand Promise</span>
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold text-brand-text mb-8 leading-tight">
+                        屋号『3時の図書室』に<br>込めた想い
+                    </h2>
+                    <p class="text-brand-text-light mb-12 leading-loose text-justify text-sm md:text-base tracking-wide">
+                        「不用品買います」という言葉は、書店の静謐な空間には馴染みません。
+                        私たちが目指すのは、午後3時のカフェのように、心安らぐ相談所です。
+                        効率よりも「対話」を、処理よりも「共感」を重視します。
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                        <div>
+                            <span class="text-2xl font-serif font-bold text-brand-text block mb-3">01. 安心</span>
+                            <p class="text-xs text-brand-text-light leading-relaxed text-justify">
+                                事務的なカウンターではなく、図書室のような空間で。お客様がリラックスして立ち寄れる雰囲気を作ります。
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-serif font-bold text-brand-text block mb-3">02. 敬意</span>
+                            <p class="text-xs text-brand-text-light leading-relaxed text-justify">
+                                マニュアル査定ではなく、モノの背景にある「物語」への共感を大切にし、お客様の思い出に寄り添います。
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-2xl font-serif font-bold text-brand-text block mb-3">03. 発見</span>
+                            <p class="text-xs text-brand-text-light leading-relaxed text-justify">
+                                懐かしいモノたちが、新しい価値（ヴィンテージ）として輝く瞬間を。お客様自身も気づかなかった価値を発掘します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:w-5/12 flex-shrink-0 order-1 lg:order-2 flex items-center justify-center gsap-image-reveal">
+                    <div class="relative max-w-md w-full">
+                         <div class="reveal-img-container h-full flex items-center justify-center rounded-lg overflow-hidden shadow-xl">
+                             <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-17.15.56.png" alt="パネルイメージ" class="w-full h-auto object-contain max-h-[600px]">
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 2: Merit -->
+    <section id="merit" class="py-32 relative overflow-hidden bg-brand-text/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 gsap-fade-up">
+                <span class="chapter-badge">Chapter 02 ── Merit</span>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-6 text-brand-text">導入のメリット</h2>
+                <p class="text-brand-text-light tracking-wide">貴施設の「集客」と「売上」に貢献するシナジー効果。</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                <div class="bg-white p-10 rounded-xl shadow-sm border border-brand-text/5 gsap-fade-up hover:shadow-lg transition-shadow">
+                    <span class="text-xs text-brand-accent font-bold tracking-widest block mb-4 font-sans">MARKETING</span>
+                    <h3 class="font-serif text-xl font-bold text-brand-text mb-8">圧倒的な新規集客</h3>
+                    <div class="flex justify-between items-end mb-4 border-b border-dashed border-gray-200 pb-2">
+                        <span class="text-sm text-brand-text-light">チラシ配布数</span>
+                        <span class="text-2xl font-bold text-brand-text font-serif">12,000<span class="text-sm font-normal ml-1">〜</span>60,000<span class="text-xs ml-1">部</span></span>
+                    </div>
+                    <div class="flex justify-between items-end border-b border-dashed border-gray-200 pb-2">
+                        <span class="text-sm text-brand-text-light">5日間の新規来客</span>
+                        <span class="text-2xl font-bold text-brand-text font-serif">50<span class="text-sm font-normal ml-1">〜</span>200<span class="text-xs ml-1">名</span></span>
+                    </div>
+                    <div class="mt-8 rounded-lg overflow-hidden border border-gray-100 shadow-inner">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771166844312.png" alt="新規集客イメージ" class="w-full h-auto object-cover">
+                    </div>
+                </div>
+                <div class="bg-white p-10 rounded-xl shadow-sm border border-brand-text/5 gsap-fade-up delay-100 flex flex-col justify-center hover:shadow-lg transition-shadow border-t-4 border-t-brand-red">
+                    <span class="text-xs text-brand-accent font-bold tracking-widest block mb-6 font-sans">PROMOTION CHALLENGE</span>
+                    <h4 class="font-serif text-lg font-bold text-brand-text mb-4 text-center">書店の構造的な<br>『赤字の壁』を解決する</h4>
+                    <div class="flex items-center justify-center gap-4 mb-6">
+                        <div class="text-center w-1/2 p-4 bg-red-50 rounded-lg border border-red-100 shadow-inner">
+                            <p class="text-[10px] text-gray-500 mb-2 font-bold">新規1名獲得コスト</p>
+                            <p class="text-3xl font-bold text-brand-red font-sans">¥1,000</p>
+                            <div class="text-[10px] text-gray-400 mt-1">広告費</div>
+                        </div>
+                        <div class="text-xl text-gray-300 font-bold">vs</div>
+                        <div class="text-center w-1/2 p-4 bg-gray-50 rounded-lg border border-gray-200 opacity-80 grayscale">
+                            <p class="text-[10px] text-gray-500 mb-2 font-bold">本1冊の利益</p>
+                            <p class="text-xl font-bold text-gray-600 font-sans">¥330</p>
+                            <div class="text-[10px] text-gray-400 mt-1">粗利 (約22%)</div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg p-4 mb-4 text-xs leading-relaxed text-gray-600">
+                        <p class="mb-2"><span class="font-bold text-brand-text">100人の新規客を呼ぶには？</span><br>
+                        一般的なチラシの反響率は約0.1%。<br>
+                        つまり<span class="font-bold text-brand-red">10万枚の配布</span>が必要です。</p>
+                        <p class="text-[10px] text-gray-400 text-right">※印刷・配布コスト：数十万円規模</p>
+                    </div>
+                    <p class="text-sm text-brand-text font-bold leading-relaxed text-center text-brand-accent mt-2">
+                        集客すればするほど赤字になる構造を、<br>「3時の図書室」が収益に変えます。
+                    </p>
+                    <p class="text-xs text-center text-brand-text-light mt-2">（集客コスト0円 ＋ 場所代収益）</p>
+                </div>
+            </div>
+            <div class="bg-white p-12 rounded-xl shadow-sm border border-brand-text/5 gsap-fade-up hover:shadow-lg transition-shadow mb-8">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <span class="text-xs text-brand-accent font-bold tracking-widest block mb-4 font-sans">SYNERGY</span>
+                        <h3 class="font-serif text-2xl font-bold text-brand-text mb-6">「臨時収入」が<br>施設テナントの売上へ</h3>
+                        <p class="text-brand-text-light text-sm leading-loose">
+                            不用品を現金化したお客様の回遊・購買行動が、施設全体の売上底上げに直結します（シャワー効果）。
+                            普段は財布の紐が固いお客様も、「臨時収入」を得ることで購買意欲が高まります。
+                        </p>
+                    </div>
+                    <div class="flex justify-center">
+                         <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e6b581e3828c.png" alt="シャワー効果イメージ" class="max-w-full h-auto max-h-48 object-contain">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 3: Plans -->
+    <section id="plans" class="py-32 bg-white/40 border-y border-brand-text/10">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-20 gsap-fade-up">
+                <span class="chapter-badge">Chapter 03 ── Plan</span>
+                <h2 class="font-serif text-3xl font-bold text-brand-text">貴施設の「手間」と「リスク」は最小限に</h2>
+                <p class="text-brand-text-light mt-4">場所をご提供いただくだけで、運営・告知・什器搬入すべて弊社がワンストップで対応。</p>
+            </div>
+            <div class="bg-white/80 backdrop-blur-sm p-10 md:p-14 rounded-2xl shadow-xl border border-brand-text/5 gsap-fade-up">
+                <div class="flex flex-col md:flex-row gap-16 items-center">
+                    <div class="w-full md:w-5/12">
+                        <dl class="space-y-8">
+                            <div class="border-l-4 border-brand-accent pl-6 py-1">
+                                <dt class="font-serif text-lg font-bold text-brand-text">必要スペース</dt>
+                                <dd class="text-3xl font-bold text-brand-text mt-2 font-serif">1.5m × 1.8m <span class="text-base font-normal text-brand-text-light">〜</span></dd>
+                            </div>
+                            <div class="border-l-4 border-gray-200 pl-6 py-1">
+                                <dt class="font-serif text-lg font-bold text-brand-text">参考収益</dt>
+                                <dd class="text-3xl font-bold text-brand-text mt-2 font-serif">15,000<span class="text-base font-normal text-brand-text-light">円〜 / 日</span></dd>
+                            </div>
+                        </dl>
+                        <p class="text-sm text-brand-text-light mt-10 leading-relaxed">
+                            電源1口のみご用意いただければ、什器・照明等はすべて弊社が持ち込みます。<br>デッドスペースの有効活用としても最適です。
+                        </p>
+                    </div>
+                    <div class="w-full md:w-7/12">
+                        <div class="rounded-lg shadow-2xl overflow-hidden border border-brand-text/5">
+                             <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e38396e383bce382b9e382a4e383a1e383bce382b8.png" alt="スペースイメージ" class="w-full h-auto">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mt-16 pt-8 border-t border-brand-text/10">
+                    <div class="flex flex-col items-center text-center group">
+                        <div class="w-full aspect-square rounded-lg overflow-hidden mb-6 shadow-md bg-white border border-brand-text/5 flex items-center justify-center p-8">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e78987e4bb98e38191.png" alt="搬入出" class="w-[80%] h-auto object-contain transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <h3 class="font-serif font-bold text-lg text-brand-text mb-3">搬入出は全て弊社で完結</h3>
+                        <p class="text-xs md:text-sm text-brand-text-light leading-relaxed">施設のスタッフ様に<br>負担をおかけすることはございません。</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center group">
+                        <div class="w-full aspect-square rounded-lg overflow-hidden mb-6 shadow-md bg-white border border-brand-text/5 flex items-center justify-center p-8">
+                             <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e690ace585a5-1.png" alt="輸送" class="w-[80%] h-auto object-contain transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <h3 class="font-serif font-bold text-lg text-brand-text mb-3">買取商品は安全に本社へ輸送</h3>
+                        <p class="text-xs md:text-sm text-brand-text-light leading-relaxed">買取商品の配送は、<br>提携配送業者が責任を持って行います。</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center group">
+                        <div class="w-full aspect-square rounded-lg overflow-hidden mb-6 shadow-md bg-white border border-brand-text/5 flex items-center justify-center p-8">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e6b885e68e83e5afbee5bf9c-2.png" alt="清掃" class="w-[80%] h-auto object-contain transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                        <h3 class="font-serif font-bold text-lg text-brand-text mb-3">現状復帰と清掃</h3>
+                        <p class="text-xs md:text-sm text-brand-text-light leading-relaxed">お借りした会場は、徹底した清掃を行い<br>元通りにしてお返しいたします。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 4: Design Optimization -->
+    <section id="design" class="py-32 bg-brand-text/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-accent/5 rounded-bl-full -z-0"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="text-center mb-10">
+                <span class="chapter-badge">Chapter 04 ── Design Optimization</span>
+                <h3 class="font-serif text-2xl font-bold text-brand-text mb-4">自社デザイナーによる、デザインの最適化</h3>
+                <p class="text-brand-text-light text-sm leading-relaxed">施設ごとにあったチラシデザインをオリジナルで提供。<br>貴社のブランドイメージを守ります。</p>
+            </div>
+            <div class="bg-white p-12 rounded-xl shadow-sm border border-brand-text/5">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div class="group relative aspect-[1/1.414] bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-13-17.12.20.png" alt="Design Sample 1" class="w-full h-full object-cover filter-sepia-brown group-hover:filter-none transition-all duration-500">
+                        <div class="absolute inset-0 bg-brand-text/0 group-hover:bg-brand-text/10 transition-colors"></div>
+                    </div>
+                    <div class="group relative aspect-[1/1.414] bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 delay-75">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-18.01.57.png" alt="Design Sample 2" class="w-full h-full object-cover filter-sepia-brown group-hover:filter-none transition-all duration-500">
+                        <div class="absolute inset-0 bg-brand-text/0 group-hover:bg-brand-text/10 transition-colors"></div>
+                    </div>
+                    <div class="group relative aspect-[1/1.414] bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 delay-150">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-18.04.36.png" alt="Design Sample 3" class="w-full h-full object-cover filter-sepia-brown group-hover:filter-none transition-all duration-500">
+                        <div class="absolute inset-0 bg-brand-text/0 group-hover:bg-brand-text/10 transition-colors"></div>
+                    </div>
+                    <div class="group relative aspect-[1/1.414] bg-gray-100 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 delay-200">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-18.02.44.png" alt="Design Sample 4" class="w-full h-full object-cover filter-sepia-brown group-hover:filter-none transition-all duration-500">
+                        <div class="absolute inset-0 bg-brand-text/0 group-hover:bg-brand-text/10 transition-colors"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 5: Products -->
+    <section id="products" class="py-32 bg-brand-bg">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20 gsap-fade-up">
+                <span class="chapter-badge">Chapter 05 ── Products</span>
+                <h2 class="font-serif text-3xl font-bold text-brand-text">取扱商材</h2>
+                <p class="text-brand-text-light mt-4">書店と親和性の高い「知的財産」や「懐かしい宝物」を幅広く。</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
+                <div class="flex flex-col items-center group cursor-pointer gsap-stagger-card">
+                    <div class="w-40 h-40 mb-6 transition-transform duration-500 group-hover:scale-110">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e6bcabe794bb2-1.png" alt="書籍" class="w-full h-full object-contain filter drop-shadow-md">
+                    </div>
+                    <h3 class="font-serif font-bold text-brand-text tracking-widest">書籍・漫画・雑誌</h3>
+                </div>
+                <div class="flex flex-col items-center group cursor-pointer gsap-stagger-card">
+                    <div class="w-40 h-40 mb-6 transition-transform duration-500 group-hover:scale-110">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e3818ae38282e381a1e38283efbc92.png" alt="おもちゃ" class="w-full h-full object-contain filter drop-shadow-md">
+                    </div>
+                    <h3 class="font-serif font-bold text-brand-text tracking-widest">おもちゃ・ソフビ</h3>
+                </div>
+                <div class="flex flex-col items-center group cursor-pointer gsap-stagger-card">
+                    <div class="w-40 h-40 mb-6 transition-transform duration-500 group-hover:scale-110">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e383ace382b3e383bce383892.png" alt="レコード" class="w-full h-full object-contain filter drop-shadow-md">
+                    </div>
+                    <h3 class="font-serif font-bold text-brand-text tracking-widest">レコード・CD</h3>
+                </div>
+                <div class="flex flex-col items-center group cursor-pointer gsap-stagger-card">
+                    <div class="w-40 h-40 mb-6 transition-transform duration-500 group-hover:scale-110">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e6a5bde599a82.png" alt="カメラ" class="w-full h-full object-contain filter drop-shadow-md">
+                    </div>
+                    <h3 class="font-serif font-bold text-brand-text tracking-widest">カメラ・楽器</h3>
+                </div>
+                <div class="flex flex-col items-center group cursor-pointer gsap-stagger-card">
+                    <div class="w-40 h-40 mb-6 transition-transform duration-500 group-hover:scale-110">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e58887e6898be38081e38386e383ace382ab2.png" alt="切手" class="w-full h-full object-contain filter drop-shadow-md">
+                    </div>
+                    <h3 class="font-serif font-bold text-brand-text tracking-widest">切手・古銭</h3>
+                </div>
+                <div class="flex flex-col items-center group cursor-pointer gsap-stagger-card">
+                    <div class="w-40 h-40 mb-6 transition-transform duration-500 group-hover:scale-110">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e3819de381aee4bb962.png" alt="ジュエリー" class="w-full h-full object-contain filter drop-shadow-md">
+                    </div>
+                    <h3 class="font-serif font-bold text-brand-text tracking-widest">ジュエリー・ブランド</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 6: Safety -->
+    <section id="safety" class="py-32 bg-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-1/2 bg-brand-bg/50 -z-10 skew-y-3 origin-top-left"></div>
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="mb-20 text-center gsap-fade-up">
+                <span class="chapter-badge">Chapter 06 ── Safety</span>
+                <h2 class="font-serif text-3xl md:text-4xl font-bold text-brand-text">業界最高水準の管理体制</h2>
+                <p class="text-brand-text-light mt-6 tracking-wide">トラブルを未然に防ぎ、企業のブランドを守る。<br>徹底された「鉄壁の守り」がここにあります。</p>
+            </div>
+            <div class="bg-gray-900 rounded-t-3xl p-4 md:p-8 border-b-4 border-brand-accent shadow-2xl relative overflow-hidden gsap-fade-up">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-white font-bold tracking-widest flex items-center gap-3">
+                            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                            REAL-TIME MONITORING
+                        </h3>
+                        <span class="text-xs text-gray-500 font-mono">LIVE FEED // HQ CONNECTION ACTIVE</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 md:gap-4">
+                        <div class="aspect-video bg-black rounded border border-gray-700 overflow-hidden relative group">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-12.28.16.png" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute top-2 left-2 text-[10px] text-green-500 font-mono">CAM-01</div>
+                        </div>
+                        <div class="aspect-video bg-black rounded border border-gray-700 overflow-hidden relative group">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-12.28.54.png" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute top-2 left-2 text-[10px] text-green-500 font-mono">CAM-02</div>
+                        </div>
+                        <div class="aspect-video bg-black rounded border border-gray-700 overflow-hidden relative group">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-12.31.48.png" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute top-2 left-2 text-[10px] text-green-500 font-mono">CAM-03</div>
+                        </div>
+                        <div class="aspect-video bg-black rounded border border-gray-700 overflow-hidden relative group">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-12.33.46.png" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute top-2 left-2 text-[10px] text-green-500 font-mono">CAM-04</div>
+                        </div>
+                        <div class="aspect-video bg-black rounded border border-gray-700 overflow-hidden relative group">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-12.45.30.png" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute top-2 left-2 text-[10px] text-green-500 font-mono">CAM-05</div>
+                        </div>
+                        <div class="aspect-video bg-black rounded border border-gray-700 overflow-hidden relative group">
+                            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-12.47.52.png" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute top-2 left-2 text-[10px] text-green-500 font-mono">CAM-06</div>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-xs mt-4 text-center">※ 本部管理部が全拠点の映像と音声を常時監視し、トラブルの予兆を検知します。</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 -mt-4 relative z-20 px-4 mb-16">
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-brand-text flex flex-col items-center text-center hover:transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-12 h-12 bg-brand-text/10 rounded-full flex items-center justify-center text-2xl mb-4">📹</div>
+                    <h4 class="font-bold text-brand-text mb-2">言った言わないの防止</h4>
+                    <p class="text-xs text-brand-text-light leading-relaxed">全商談を録画・録音しクラウドへ保存。<br>事実確認を迅速に行います。</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-brand-text flex flex-col items-center text-center hover:transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-12 h-12 bg-brand-text/10 rounded-full flex items-center justify-center text-2xl mb-4">⚡</div>
+                    <h4 class="font-bold text-brand-text mb-2">不適切対応の即時是正</h4>
+                    <p class="text-xs text-brand-text-light leading-relaxed">モニタリング中の本部から<br>現場へ直接指導が入ります。</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-lg p-6 border-t-4 border-brand-text flex flex-col items-center text-center hover:transform hover:-translate-y-2 transition-transform duration-300">
+                    <div class="w-12 h-12 bg-brand-text/10 rounded-full flex items-center justify-center text-2xl mb-4">📞</div>
+                    <h4 class="font-bold text-brand-text mb-2">お客様相談室の設置</h4>
+                    <p class="text-xs text-brand-text-light leading-relaxed">買取後のキャンセルや相談に対応する<br>専用窓口を完備。</p>
+                </div>
+            </div>
+            <div class="space-y-12">
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-xl flex flex-col md:flex-row gap-8 items-center gsap-fade-up">
+                    <div class="w-full md:w-1/2 overflow-hidden rounded-xl shadow-md border border-gray-100">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-11.24.45.png" alt="記録プロセス" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-700">
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <span class="text-brand-accent font-bold text-xs tracking-widest block mb-2">PROCESS 01</span>
+                        <h3 class="text-2xl font-serif font-bold text-brand-text mb-4">徹底した記録プロセス</h3>
+                        <p class="text-brand-text-light text-sm leading-loose mb-6">「誰が」「何を」「いくらで」取引したのか。来客ごとの写真撮影、商品の詳細写真、そして身分証の確認。<br>これら全てのプロセスをシステム上で記録し、不正の入り込む余地を完全に排除します。警察署との連携（盗難品リスト照合）もスムーズに行える体制です。</p>
+                        <div class="flex gap-2">
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-3 py-1 rounded-full">来客記録</span>
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-3 py-1 rounded-full">商品撮影</span>
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-3 py-1 rounded-full">クラウド保存</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-xl flex flex-col md:flex-row-reverse gap-8 items-center gsap-fade-up">
+                    <div class="w-full md:w-1/2 overflow-hidden rounded-xl shadow-md border border-gray-100">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-11.24.34.png" alt="本部査定サポート" class="w-full h-auto object-cover hover:scale-105 transition-transform duration-700">
+                    </div>
+                    <div class="w-full md:w-1/2">
+                        <span class="text-brand-accent font-bold text-xs tracking-widest block mb-2">PROCESS 02</span>
+                        <h3 class="text-2xl font-serif font-bold text-brand-text mb-4">本部査定サポート</h3>
+                        <p class="text-brand-text-light text-sm leading-loose mb-6">現場スタッフ個人の知識だけに頼りません。<br>専門知識を持つ本部スタッフが遠隔でリアルタイムに真贋判定・価格決定をバックアップ。<br>これにより、誤った査定を防ぎ、お客様に常に「適正価格」での買取を保証します。</p>
+                        <div class="flex gap-2">
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-3 py-1 rounded-full">リアルタイム連携</span>
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-3 py-1 rounded-full">専門家チェック</span>
+                            <span class="bg-gray-100 text-gray-600 text-[10px] px-3 py-1 rounded-full">誤査定防止</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 7: Track Record -->
+    <section id="business" class="py-32 bg-brand-bg border-t border-brand-text/5">
+        <div class="max-w-6xl mx-auto px-6 text-center">
+            <div class="mb-16 gsap-fade-up">
+                <span class="chapter-badge">Chapter 07 ── Event Track Record</span>
+                <h2 class="font-serif text-3xl font-bold text-brand-text">全国の商業施設を支援（催事実績）</h2>
+                <p class="text-brand-text-light mt-4">年間1,000店舗開催。日本最大規模の買取イベント事業へ。</p>
+            </div>
+            <div class="bg-white p-12 rounded-2xl shadow-sm border border-brand-text/5 gsap-fade-up relative overflow-hidden">
+                <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e4bc81e6a5ade383ade382b4.png" alt="主な開催先・取引企業様" class="max-w-4xl mx-auto opacity-70 logo-blur">
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <p class="text-brand-text font-serif text-lg bg-white/80 px-6 py-2 rounded-full border border-brand-text/10 shadow-sm">全国の主要な商業施設様と多数お取引実績がございます</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 8: Tenant Shops -->
+    <section class="py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 gsap-fade-up">
+                <span class="chapter-badge">Chapter 08 ── Tenant Shops</span>
+                <h2 class="font-serif text-3xl font-bold text-brand-text">常設店舗のご紹介</h2>
+                <p class="text-brand-text-light mt-4">地域に根付いた「ご相談カウンター」として運営中。</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="gsap-stagger-shop group cursor-pointer">
+                    <div class="rounded-xl overflow-hidden shadow-sm h-56 mb-6">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-14-22.09.19.png" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter-sepia-brown group-hover:filter-none">
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-brand-text text-xl mb-2">ピアゴ阿倉川店</h3>
+                        <p class="text-xs text-brand-text-light flex items-center gap-2 mb-2"><span class="w-2 h-2 rounded-full bg-brand-green"></span>三重県四日市市</p>
+                        <p class="text-xs text-brand-text-light opacity-80">2022年9月 OPEN</p>
+                    </div>
+                </div>
+                <div class="gsap-stagger-shop group cursor-pointer">
+                    <div class="rounded-xl overflow-hidden shadow-sm h-56 mb-6">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-14-22.09.28.png" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter-sepia-brown group-hover:filter-none">
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-brand-text text-xl mb-2">イオンタウン佐野店</h3>
+                        <p class="text-xs text-brand-text-light flex items-center gap-2 mb-2"><span class="w-2 h-2 rounded-full bg-brand-green"></span>栃木県佐野市</p>
+                        <p class="text-xs text-brand-text-light opacity-80">2022年7月 OPEN</p>
+                    </div>
+                </div>
+                <div class="gsap-stagger-shop group cursor-pointer">
+                    <div class="rounded-xl overflow-hidden shadow-sm h-56 mb-6">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-14-22.09.36.png" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter-sepia-brown group-hover:filter-none">
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-bold text-brand-text text-xl mb-2">マックスバリュ伊豆長岡店</h3>
+                        <p class="text-xs text-brand-text-light flex items-center gap-2 mb-2"><span class="w-2 h-2 rounded-full bg-brand-green"></span>静岡県伊豆の国市</p>
+                        <p class="text-xs text-brand-text-light opacity-80">2022年4月 OPEN</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chapter 9: CSR -->
+    <section id="csr" class="py-32 bg-brand-green/5 overflow-hidden border-t border-brand-green/10 relative">
+        <div class="absolute bottom-[-10%] right-[-10%] opacity-20 pointer-events-none z-0 mix-blend-multiply">
+             <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e6a8aae59091e3818d.png" alt="Cat Character" class="w-[600px] h-auto">
+        </div>
+        <div class="max-w-5xl mx-auto px-6 text-center mb-16 gsap-fade-up relative z-10">
+            <span class="chapter-badge text-brand-green border-brand-green">Chapter 09 ── CSR</span>
+            <h2 class="font-serif text-3xl font-bold text-brand-text mb-6">物語は、国境を越えて。</h2>
+            <div class="text-brand-text-light tracking-wide leading-relaxed space-y-4">
+                <p>私たちは買い取った商品と売り上げの一部を、定期的にカンボジアの学校へ寄付しています。<br>お客様の「手放す」という行為が、世界のどこかの子供たちの学びにつながる。<br>それが私たちの考える「知的な循環」の最終形です。</p>
+                <div class="inline-block bg-white/80 p-4 rounded-lg border border-brand-green/20 shadow-sm text-sm">
+                    <div class="flex items-center justify-center gap-2 mb-2">
+                        <span class="w-3 h-3 rounded-full bg-[#E5243B]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#DDA63A]"></span>
+                        <span class="w-3 h-3 rounded-full bg-[#4C9F38]"></span>
+                        <span class="font-bold text-brand-green">SDGs Contribution</span>
+                    </div>
+                    <p class="text-xs text-left">寄付活動を行っているのは、実際にお店に立っているへ弊社の査定士です。</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6 opacity-80 hover:opacity-100 transition-opacity duration-500 relative z-10">
+            <div class="flex gap-4 animate-scroll w-max hover:[animation-play-state:paused]">
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.45.43.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.45.53.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.46.05.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-13-22.03.40.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.47.25.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.46.58.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.46.44.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.46.35.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.45.43.png" class="w-full h-full object-cover"></div>
+                <div class="csr-slider-image"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-15-14.45.53.png" class="w-full h-full object-cover"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-[#2a2522] text-[#E8D4A0] pt-24 pb-12 relative overflow-hidden">
+        <div class="max-w-6xl mx-auto px-6 relative z-10 flex flex-col md:flex-row gap-16 justify-between">
+            <div class="gsap-fade-up w-full md:w-1/2">
+                <h2 class="font-serif text-3xl md:text-5xl font-bold mb-8 leading-tight text-white">
+                    Start a New Story.<br>
+                    <span class="text-xl md:text-2xl opacity-70 font-normal mt-2 block">あなたの場所で、物語を始めませんか？</span>
+                </h2>
+                <p class="text-white/60 mb-12 leading-relaxed font-light text-sm tracking-wide">空きスペースの有効活用、集客イベントのご相談など、<br>まずはお気軽にお問い合わせください。</p>
+                <a href="#" onclick="openContact(event)" class="inline-block px-10 py-4 border border-[#E8D4A0] text-[#E8D4A0] font-sans tracking-widest hover:bg-[#E8D4A0] hover:text-[#2a2522] transition-all duration-300">CONTACT US</a>
+            </div>
+            <div class="w-full md:w-1/3 flex flex-col justify-between gsap-fade-up delay-100">
+                <div class="mb-12">
+                    <h3 class="text-white font-bold tracking-widest mb-6 text-sm border-b border-white/10 pb-2">COMPANY</h3>
+                    <div class="text-sm opacity-70 space-y-4 font-light">
+                        <p class="text-lg">Bremen株式会社</p>
+                        <p>〒165-0026<br>東京都中野区新井1-12-8 Nakano Square 3F</p>
+                        <p class="text-xs pt-4">東京都公安委員会許可 第304391705413号</p>
+                        <p class="text-xs pt-2">主要取引銀行：三井住友銀行 / 巣鴨信用金庫</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="relative z-30 border-t border-white/10 py-4 text-center text-xs opacity-40 font-serif tracking-widest bg-black/20">&copy; 2026 Bremen Inc. All Rights Reserved.</div>
+    </footer>
+
+    <!-- Logic -->
+    <script>
+        function revealSite() {
+            const loader = document.getElementById('loader');
+            if (!loader || loader.classList.contains('loaded')) return;
+            loader.classList.add('loaded');
+            loader.style.opacity = 0;
+            setTimeout(() => {
+                loader.style.display = 'none';
+                try { initGSAP(); } catch(e) { console.error("GSAP Error:", e); }
+                try { initThree(); } catch(e) { console.error("Three.js Error:", e); }
+            }, 800);
+        }
+
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            const logo = loader.querySelector('.loader-logo');
+            const bar = loader.querySelector('.loader-bar');
+            const text = loader.querySelector('.loader-text');
+            setTimeout(() => { logo.style.opacity = 1; logo.style.transform = 'translateY(0)'; logo.style.transition = 'all 1s ease-out'; }, 100);
+            setTimeout(() => { bar.style.width = '100%'; bar.style.transition = 'width 1.5s ease-in-out'; }, 500);
+            setTimeout(() => { text.style.opacity = 1; text.style.transition = 'opacity 0.5s ease'; }, 800);
+            setTimeout(() => { revealSite(); }, 2500);
+        });
+        setTimeout(() => { revealSite(); }, 3000);
+
+        // Sparkle Effect
+        function createSparkles(container) {
+            const sparkleContainer = document.getElementById('sparkle-container');
+            if (!sparkleContainer) return;
+            sparkleContainer.innerHTML = '';
+            const colors = ['#FFD700', '#B08040', '#E8D4A0', '#FFF8DC', '#DAA520'];
+            for (let i = 0; i < 24; i++) {
+                const sparkle = document.createElement('div');
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = Math.random() * 4 + 3;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const delay = Math.random() * 0.8;
+                const duration = 0.6 + Math.random() * 0.8;
+                sparkle.style.cssText = `
+                    position:absolute; left:${x}%; top:${y}%;
+                    width:${size}px; height:${size}px; border-radius:50%;
+                    background:radial-gradient(circle, ${color} 0%, transparent 70%);
+                    box-shadow: 0 0 ${size*2}px ${color};
+                    opacity:0; pointer-events:none; z-index:200;
+                `;
+                sparkle.innerHTML = '<span style="position:absolute;top:-3px;left:-1px;font-size:8px;color:' + color + ';text-shadow:0 0 4px ' + color + '">✦</span>';
+                sparkleContainer.appendChild(sparkle);
+                gsap.to(sparkle, {
+                    opacity: 1, scale: 1.5, duration: duration * 0.4, delay: delay,
+                    ease: "power2.out",
+                    onComplete: () => {
+                        gsap.to(sparkle, {
+                            opacity: 0, scale: 0, y: -20, duration: duration * 0.6,
+                            ease: "power1.in"
+                        });
+                    }
+                });
+            }
+        }
+
+        function openContact(e) {
+            if(e) e.preventDefault();
+            const modal = document.getElementById('contact-modal');
+            const bookContainer = document.getElementById('book-container');
+            const bookCover = document.getElementById('book-cover');
+            const formPage = document.getElementById('form-page');
+            const overlay = modal.querySelector('.modal-overlay');
+            // Reset state
+            if (formPage) gsap.set(formPage, { rotationY: 0 });
+            const form = document.getElementById('contact-form');
+            if (form) form.reset();
+            modal.classList.remove('hidden');
+            gsap.to(overlay, { opacity: 1, duration: 0.3 });
+            gsap.fromTo(bookContainer, 
+                { y: 50, opacity: 0, scale: 0.9 },
+                { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.2)", onComplete: () => {
+                    createSparkles(bookContainer);
+                    gsap.to(bookCover, { rotationY: -180, duration: 1.2, ease: "power2.inOut", transformOrigin: "left center" });
+                }}
+            );
+        }
+
+        function closeContact() {
+            const modal = document.getElementById('contact-modal');
+            const bookContainer = document.getElementById('book-container');
+            const bookCover = document.getElementById('book-cover');
+            const formPage = document.getElementById('form-page');
+            const overlay = modal.querySelector('.modal-overlay');
+            // First close form page if it was turned
+            const closeBook = () => {
+                createSparkles(bookContainer);
+                gsap.to(bookCover, { 
+                    rotationY: 0, duration: 0.6, ease: "power2.inOut",
+                    onComplete: () => {
+                        gsap.to(bookContainer, { y: 50, opacity: 0, scale: 0.9, duration: 0.4 });
+                        gsap.to(overlay, { opacity: 0, duration: 0.4, delay: 0.1,
+                            onComplete: () => { 
+                                modal.classList.add('hidden'); 
+                                gsap.set(bookCover, { rotationY: 0 });
+                                if (formPage) gsap.set(formPage, { rotationY: 0 });
+                            }
+                        });
+                    }
+                });
+            };
+            // If form page is turned, close it first
+            if (formPage && gsap.getProperty(formPage, "rotationY") < -90) {
+                gsap.to(formPage, {
+                    rotationY: 0, duration: 0.6, ease: "power2.inOut", transformOrigin: "left center",
+                    onComplete: closeBook
+                });
+            } else {
+                closeBook();
+            }
+        }
+
+        // Form submission → page turn → thank you
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('contact-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const formPage = document.getElementById('form-page');
+                    if (formPage) {
+                        createSparkles(document.getElementById('book-container'));
+                        gsap.to(formPage, {
+                            rotationY: -180, duration: 1.0, ease: "power2.inOut", transformOrigin: "left center"
+                        });
+                    }
+                });
+            }
+        });
+
+        const initGSAP = () => {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray('.gsap-fade-up').forEach(el => {
+                gsap.fromTo(el, { opacity: 0, y: 40 }, { scrollTrigger: { trigger: el, start: "top 85%" }, opacity: 1, y: 0, duration: 1.2, ease: "power3.out" });
+            });
+            gsap.utils.toArray('.gsap-image-reveal').forEach(el => {
+                ScrollTrigger.create({ trigger: el, start: "top 80%", onEnter: () => el.querySelector('.reveal-img-container')?.classList.add('is-visible') });
+            });
+            gsap.from(".gsap-stagger-card", { scrollTrigger: { trigger: "#products", start: "top 75%" }, y: 30, opacity: 0, duration: 0.8, stagger: 0.1, ease: "back.out(1.7)" });
+            const conceptLines = document.querySelectorAll('.concept-line');
+            if(conceptLines.length > 0) {
+                gsap.to(conceptLines, { scrollTrigger: { trigger: ".concept-text-container", start: "top 80%" }, opacity: 1, y: 0, stagger: 0.3, duration: 1.5, ease: "power2.out" });
+            }
+            gsap.from(".gsap-stagger-shop", { scrollTrigger: { trigger: ".gsap-stagger-shop", start: "top 80%" }, y: 50, opacity: 0, duration: 1.5, stagger: 0.2, ease: "power3.out" });
+        };
+
+        const initThree = () => {
+            const container = document.getElementById('canvas-container');
+            if(!container) return;
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth/container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            const renderer = new THREE.WebGLRenderer({alpha:true, antialias:true});
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+            const count = 100;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(count * 3);
+            const phases = new Float32Array(count);
+            for(let i=0; i<count; i++) {
+                positions[i*3] = (Math.random()-0.5)*15;
+                positions[i*3+1] = (Math.random()-0.5)*10;
+                positions[i*3+2] = (Math.random()-0.5)*10;
+                phases[i] = Math.random() * Math.PI * 2;
+            }
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('phase', new THREE.BufferAttribute(phases, 1));
+            const getGlowTexture = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 32; canvas.height = 32;
+                const ctx = canvas.getContext('2d');
+                const grad = ctx.createRadialGradient(16,16,0, 16,16,16);
+                grad.addColorStop(0, 'rgba(255, 230, 150, 1)');
+                grad.addColorStop(0.4, 'rgba(255, 200, 100, 0.4)');
+                grad.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0,0,32,32);
+                const tex = new THREE.Texture(canvas);
+                tex.needsUpdate = true;
+                return tex;
+            };
+            const material = new THREE.PointsMaterial({ size: 0.25, map: getGlowTexture(), transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, vertexColors: false, color: 0xFFD700 });
+            const particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            const clock = new THREE.Clock();
+            const animate = () => {
+                const t = clock.getElapsedTime();
+                const positions = particles.geometry.attributes.position.array;
+                for(let i=0; i<count; i++) {
+                    const ix = i*3;
+                    const iy = i*3+1;
+                    positions[iy] += 0.003;
+                    if(positions[iy] > 5) positions[iy] = -5;
+                    positions[ix] += Math.sin(t * 0.5 + phases[i]) * 0.002;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
+                particles.rotation.y = t * 0.05;
+                material.opacity = 0.5 + Math.sin(t * 2) * 0.3;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animate);
+            };
+            animate();
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth/container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        };
+    </script>
+</body>
+</html>
