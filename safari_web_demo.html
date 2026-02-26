@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safari公式 | 買取金額5倍キャンペーン実施中｜高価買取ならSafariへ</title>
+    <meta name="description" content="高価買取ならSafari（サファリ）へ！着物・切手・ブランド品・時計など、最短即日で出張買取いたします。安心の無料査定。">
+    
+    <!-- Fonts: Noto Sans JP + Montserrat (English nums) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,700;1,900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons: FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* =========================================
+           Design Tokens & Base
+           ========================================= */
+        :root {
+            /* Colors */
+            --c-navy: #1A2B4C;
+            --c-navy-dark: #0f1a30;
+            --c-navy-deep: #0a1120;
+            --c-yellow: #F4D03F;
+            --c-yellow-bg: #FFF9C4;
+            --c-orange: #FF6600; 
+            --c-blue-pale: #E6F4F1;
+            --c-text: #333333;
+            --c-text-light: #666666;
+            --c-white: #ffffff;
+            --c-border: #e0e0e0;
+            --c-gray-bg: #F9FAFB;
+
+            /* Spacing & Layout */
+            --container-w: 1200px;
+            --header-h-pc: 130px; 
+            --header-h-sp: 65px;
+            
+            /* Shadows & Effects */
+            --shadow-card: 0 10px 40px -10px rgba(26, 43, 76, 0.08);
+            --ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        /* Reset */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: "Noto Sans JP", sans-serif;
+            color: var(--c-text);
+            line-height: 1.7;
+            background-color: var(--c-white);
+            overflow-x: hidden;
+            font-style: normal;
+        }
+        a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; vertical-align: bottom; }
+        
+        /* Typography Utility */
+        .en { font-family: "Montserrat", sans-serif; }
+        .serif { font-family: "Noto Serif JP", serif; }
+        .text-center { text-align: center; }
+        .text-navy { color: var(--c-navy); }
+        .font-bold { font-weight: 700; }
+        .font-heavy { font-weight: 900; }
+
+        /* Wrapper */
+        .lp-safari-wrapper { width: 100%; overflow: hidden; position: relative; }
+        .container {
+            max-width: var(--container-w);
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* Animation: Fade Up */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+        }
+        .fade-up.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           Header
+           ========================================= */
+        .site-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 4px solid var(--c-yellow);
+            transition: all 0.3s ease;
+        }
+
+        .header-upper {
+            border-bottom: 1px solid var(--c-border);
+            padding: 12px 0;
+        }
+        .header-upper-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header-logo img {
+            height: 40px;
+            width: auto;
+            display: block;
+        }
+        .header-tagline {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--c-navy);
+            border-left: 2px solid var(--c-yellow);
+            padding-left: 15px;
+        }
+
+        .header-lower {
+            padding: 10px 0;
+        }
+        .header-nav {
+            display: flex;
+            justify-content: center;
+        }
+        .nav-list {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        .nav-item a {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--c-navy);
+            position: relative;
+            letter-spacing: 0.05em;
+        }
+        .nav-item a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0; width: 0; height: 2px;
+            background: var(--c-yellow);
+            transition: width 0.3s ease;
+        }
+        .nav-item a:hover::after { width: 100%; }
+
+        .header-cta-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .header-tel-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .header-tel-upper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1;
+        }
+        .tel-icon-mark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 32px;
+        }
+        .tel-icon-mark img {
+            height: 32px;
+            width: auto;
+        }
+        .tel-number {
+            font-size: 32px;
+            line-height: 1;
+            font-weight: 900;
+            color: var(--c-orange);
+            font-family: "Montserrat", sans-serif;
+            letter-spacing: -0.02em;
+        }
+        .tel-desc {
+            font-size: 10px;
+            color: #333;
+            font-weight: 700;
+            margin-top: 2px;
+            letter-spacing: 0.05em;
+        }
+
+        .mobile-header-inner { display: none; }
+
+        @media (max-width: 1100px) {
+            .nav-list { gap: 30px; }
+            .tel-number { font-size: 26px; }
+        }
+        @media (max-width: 991px) {
+            .header-upper, .header-lower { display: none; }
+            .site-header { height: var(--header-h-sp); }
+            .mobile-header-inner {
+                height: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 20px;
+            }
+            .header-logo img { height: 32px; }
+            .mobile-header-controls {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            .mobile-menu-btn { font-size: 24px; color: var(--c-navy); }
+        }
+
+        /* =========================================
+           Hero Section (Updated to Full Width)
+           ========================================= */
+        .hero {
+            margin-top: var(--header-h-pc);
+            background-color: #f1f9f8; 
+            padding: 0;
+            overflow: hidden;
+            display: block;
+            width: 100%;
+        }
+        
+        .hero-banner-img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @media (max-width: 991px) {
+            .hero { margin-top: var(--header-h-sp); }
+        }
+
+        /* =========================================
+           Sections
+           ========================================= */
+        .section-title { text-align: center; margin-bottom: 30px; } 
+        .section-title .sub { 
+            display: inline-block; 
+            background: var(--c-white); 
+            border: 2px solid var(--c-yellow);
+            padding: 5px 20px; 
+            color: var(--c-navy); 
+            font-family: "Montserrat"; 
+            font-weight: 700; 
+            font-size: 16px; 
+            margin-bottom: 15px; 
+            border-radius: 50px; 
+        }
+        .section-title h2 { font-size: 36px; color: var(--c-navy); font-weight: 700; }
+
+        /* News */
+        .section-news { margin-bottom: 40px; margin-top: 0; padding: 40px 0; background: #fff; position: relative; z-index: 5; }
+        .news-header { display: flex; justify-content: space-between; align-items: end; margin-bottom: 20px; border-bottom: 4px solid var(--c-navy); padding-bottom: 10px; }
+        .news-heading { font-size: 28px; color: var(--c-navy); font-weight: 700; }
+        .news-list { background: var(--c-white); }
+        .news-item { padding: 15px 0; border-bottom: 1px solid var(--c-border); display: flex; flex-wrap: wrap; align-items: center; gap: 15px; transition: background 0.3s; }
+        .news-item:hover { background: #fafafa; }
+        .news-date { font-family: "Montserrat"; color: var(--c-text-light); font-size: 14px; font-weight: 700; }
+        .news-cat { background: var(--c-navy); color: var(--c-white); font-size: 11px; padding: 4px 10px; font-weight: 700; border-radius: 4px; }
+        .news-link { flex: 1; color: var(--c-text); font-weight: 500; }
+        .news-link:hover { color: var(--c-navy); text-decoration: underline; }
+
+        /* Events Loop (Restored to 2 Rows) */
+        .section-events { padding: 40px 0; overflow: hidden; background: #fff; }
+        .section-events h2 { text-align: center; font-size: 36px; color: var(--c-navy); font-weight: 700; margin-bottom: 40px; }
+        .section-events h2 span { display: inline-block; border-bottom: 4px solid var(--c-yellow); padding-bottom: 5px; }
+        .scroll-wrapper { width: 100%; overflow: hidden; margin-bottom: 25px; }
+        .scroll-track { display: flex; gap: 20px; width: max-content; }
+        .scroll-item { 
+            width: 280px; height: 180px; flex-shrink: 0; border-radius: 12px; overflow: hidden; position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .scroll-item img { width: 100%; height: 100%; object-fit: cover; }
+        .animate-left { animation: scrollLeft 50s linear infinite; }
+        .animate-right { animation: scrollRight 50s linear infinite; }
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+
+        /* Problem */
+        .section-problem {
+            padding: 80px 0;
+            background: var(--c-gray-bg);
+            text-align: center;
+        }
+        .problem-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--c-navy);
+            margin-bottom: 30px;
+            line-height: 1.4;
+            text-align: center;
+        }
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: center;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+        .problem-content {
+            text-align: left;
+            padding-right: 10px;
+        }
+        .problem-desc {
+            font-size: 16px;
+            color: var(--c-text);
+            margin-bottom: 40px;
+            line-height: 2;
+            font-weight: 500;
+        }
+        .btn-problem {
+            display: inline-block;
+            background: var(--c-navy);
+            color: var(--c-white);
+            font-weight: 700;
+            font-size: 20px;
+            padding: 18px 40px;
+            border-radius: 50px;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(26, 43, 76, 0.3);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-problem:hover {
+            background: var(--c-navy-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(26, 43, 76, 0.4);
+        }
+        
+        .problem-map {
+            position: relative;
+            transform: translateX(-30px);
+        }
+        .problem-map img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+        }
+        .map-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: absolute;
+            bottom: 20px;
+            right: 0;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--c-text);
+        }
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            border-radius: 2px;
+        }
+        .legend-box.active { background-color: #F2C94C; } 
+        .legend-box.inactive { background-color: #2D3047; }
+        
+        @media (max-width: 991px) {
+            .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+            .problem-title, .problem-desc { text-align: center; }
+            .problem-content { display: flex; flex-direction: column; align-items: center; padding-right: 0; }
+            .map-legend { position: relative; bottom: auto; right: auto; margin-top: 20px; align-items: flex-end; width: 100%; }
+            .problem-map { transform: none; }
+        }
+
+        /* Stores */
+        .section-stores { margin-top: 60px; padding: 20px 0 40px; }
+        .stores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .store-card { background: #fff; border: 1px solid var(--c-border); border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s ease; }
+        .store-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(26,43,76,0.1); }
+        .store-img { height: 200px; width: 100%; object-fit: cover; }
+        .store-info { padding: 20px; }
+        .store-name { font-size: 18px; font-weight: 700; color: var(--c-navy); margin-bottom: 10px; }
+        .store-address { font-size: 13px; color: var(--c-text); line-height: 1.6; }
+        @media (max-width: 768px) { .stores-grid { grid-template-columns: 1fr; } }
+
+        /* Items */
+        .section-items { padding: 60px 0; }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .item-card { display: flex; flex-direction: column; align-items: center; background: var(--c-white); border: 1px solid var(--c-border); padding: 25px 10px; border-radius: 12px; transition: all 0.3s ease; }
+        .item-card:hover { border-color: var(--c-navy); background: var(--c-blue-pale); transform: translateY(-3px); }
+        .item-icon { font-size: 36px; color: var(--c-navy); margin-bottom: 15px; }
+        .item-name { font-weight: 700; font-size: 16px; color: var(--c-navy); }
+
+        /* Results (Updated to Center) */
+        .section-results { padding: 60px 0; }
+        .results-slider { 
+            display: flex; 
+            overflow-x: auto; 
+            gap: 30px; 
+            padding: 20px 10px 40px; 
+            scroll-snap-type: x mandatory; 
+            -webkit-overflow-scrolling: touch;
+            justify-content: center; /* Centering items */
+        }
+        .results-slider::-webkit-scrollbar { height: 8px; }
+        .results-slider::-webkit-scrollbar-thumb { background: var(--c-navy); border-radius: 4px; }
+        .result-card { flex: 0 0 320px; background: var(--c-white); border: 1px solid var(--c-border); border-radius: 12px; box-shadow: var(--shadow-card); scroll-snap-align: start; transition: transform 0.3s ease; overflow: hidden; }
+        .result-img { height: 220px; background: #f0f0f0; } .result-img img { width: 100%; height: 100%; object-fit: cover; }
+        .result-body { padding: 25px; } .result-title { font-weight: 700; font-size: 18px; margin-bottom: 15px; }
+        .result-price { display: flex; justify-content: space-between; align-items: baseline; background: var(--c-blue-pale); padding: 10px; border-radius: 8px; }
+        .price-val { font-size: 28px; color: var(--c-navy); font-weight: 700; font-family: "Montserrat"; }
+        
+        @media (max-width: 991px) {
+            .results-slider { justify-content: flex-start; padding-left: 20px; } /* Reset to start for mobile horizontal scroll */
+        }
+
+        /* Methods */
+        .section-methods { background: var(--c-navy); color: var(--c-white); padding: 100px 0; }
+        .section-methods .section-title h2 { color: var(--c-white); }
+        .methods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .method-card { background: rgba(255,255,255,1); border: none; padding: 50px 30px; text-align: center; border-radius: 16px; color:var(--c-text); box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+        .method-img { margin-bottom: 25px; }
+        .method-img img { width: 100%; height: auto; max-width: 280px; display: block; margin: 0 auto; }
+        .method-title { font-size: 24px; font-weight: 700; margin-bottom: 15px; color: var(--c-navy); }
+        .method-desc { font-size: 14px; line-height: 1.8; }
+
+        /* Donation */
+        .section-donation { padding: 100px 0; background: var(--c-blue-pale); }
+        .donation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .donation-img img { width: 100%; height: auto; border-radius: 20px; box-shadow: 0 15px 40px rgba(26,43,76,0.1); border: 4px solid var(--c-white); }
+        .donation-content { padding: 20px; }
+        .donation-title { font-size: 28px; font-weight: 700; color: var(--c-navy); margin-bottom: 30px; line-height: 1.4; position: relative; padding-bottom: 15px; }
+        .donation-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 60px; height: 3px; background: var(--c-yellow); }
+        .donation-text { font-size: 15px; line-height: 1.9; color: var(--c-text); text-align: justify; letter-spacing: 0.05em; }
+
+        /* Recruit Section (Documentary Style) */
+        .section-recruit { padding: 100px 0; background: var(--c-yellow); text-align: center; }
+        .recruit-header { margin-bottom: 60px; }
+        .recruit-header h2 { font-size: 42px; font-weight: 900; color: var(--c-navy); margin-bottom: 20px; letter-spacing: 0.02em; }
+        .recruit-header p { font-size: 18px; color: var(--c-navy); font-weight: 500; }
+        .recruit-doc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1100px; margin: 0 auto 60px; }
+        .doc-card { background: var(--c-white); border-radius: 16px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: transform 0.3s var(--ease-out); text-align: left; }
+        .doc-card:hover { transform: translateY(-10px); }
+        .doc-visual { height: 200px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .doc-visual.navy { background: var(--c-navy); }
+        .doc-visual.gold { background: #B29532; }
+        .doc-visual-text { font-size: 36px; font-weight: 900; color: rgba(255,255,255,0.8); font-family: "Montserrat"; letter-spacing: -0.02em; }
+        .doc-play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: var(--c-white); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .doc-play-btn i { font-size: 24px; color: #E74C3C; margin-left: 5px; }
+        .doc-body { padding: 25px; background: #fff; }
+        .doc-tag { display: inline-block; background: var(--c-navy); color: #fff; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 4px; margin-bottom: 15px; font-family: "Montserrat"; letter-spacing: 0.1em; }
+        .doc-title { font-size: 14px; font-weight: 700; color: var(--c-text); line-height: 1.6; }
+        .btn-recruit-cta { background: var(--c-navy); color: var(--c-white); padding: 20px 60px; border-radius: 100px; font-weight: 700; font-size: 20px; transition: all 0.3s; display: inline-flex; align-items: center; gap: 15px; box-shadow: 0 10px 30px rgba(26, 43, 76, 0.3); }
+        .btn-recruit-cta:hover { background: var(--c-navy-dark); transform: scale(1.05); }
+
+        /* Facility CTA */
+        .facility-cta-container { max-width: 800px; margin: 40px auto 60px; padding: 0 20px; }
+        .facility-cta-box { background: linear-gradient(135deg, #1A2B4C 0%, #2a4066 100%); border-radius: 16px; padding: 40px; display: flex; flex-direction: column; align-items: center; text-align: center; color: #fff; position: relative; overflow: hidden; box-shadow: 0 15px 30px rgba(26, 43, 76, 0.2); }
+        .facility-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        .facility-bg img { width: 100%; height: 100%; object-fit: cover; filter: blur(4px); transform: scale(1.1); }
+        .facility-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26,43,76,0.6); z-index: 2; }
+        .facility-content { position: relative; z-index: 10; }
+        .facility-cta-header { font-size: 24px; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; justify-content: center; }
+        .facility-cta-header i { color: var(--c-yellow); }
+        .facility-cta-desc { font-size: 15px; line-height: 1.6; margin-bottom: 25px; }
+        .btn-facility { background: var(--c-white); color: var(--c-navy); font-weight: 700; padding: 15px 40px; border-radius: 50px; font-size: 16px; display: inline-flex; align-items: center; gap: 10px; transition: all 0.3s; border: 2px solid var(--c-white); position: relative; z-index: 10; }
+        .btn-facility:hover { background: transparent; color: var(--c-white); }
+
+        /* Footer */
+        .site-footer { background: var(--c-navy); color: var(--c-white); padding: 80px 0 30px; font-size: 14px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; margin-bottom: 50px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center; color: rgba(255,255,255,0.5); font-size: 12px; }
+
+        /* Mobile Float CTA */
+        .mobile-cta { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--c-white); border-top: 2px solid var(--c-navy); padding: 10px; display: none; gap: 10px; z-index: 999; }
+        .cta-btn-sp { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; font-weight: 700; font-size: 14px; border-radius: 8px; }
+        .cta-btn-sp.tel { background: var(--c-white); border: 2px solid var(--c-navy); color: var(--c-navy); }
+        .cta-btn-sp.web { background: var(--c-navy); color: var(--c-white); }
+        @media (max-width: 768px) { .mobile-cta { display: flex; } .site-footer { padding-bottom: 100px; } }
+    </style>
+</head>
+<body>
+
+<div class="lp-safari-wrapper">
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-upper">
+            <div class="container header-upper-inner">
+                <div class="header-logo-group">
+                    <a href="/" class="header-logo">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382a2e383bce38388e3839ce383bce38389-1.png" alt="Safari">
+                    </a>
+                    <div class="header-tagline">
+                        ブランド品を売るなら<br>
+                        全国展開のSafariへ。
+                    </div>
+                </div>
+
+                <div class="header-cta-area">
+                    <div class="header-tel-box">
+                        <div class="header-tel-upper">
+                            <div class="tel-icon-mark">
+                                <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e99bbbe8a9b1e382a2e382a4e382b3e383b3.png" alt="TEL">
+                            </div>
+                            <span class="tel-number">0120-161-102</span>
+                        </div>
+                        <p class="tel-desc">通話料無料・毎日10:00〜18:00まで受付中</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-lower">
+            <div class="container">
+                <nav class="header-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item"><a href="#">ホーム</a></li>
+                        <li class="nav-item"><a href="#">初めての方へ</a></li>
+                        <li class="nav-item"><a href="#items">買取品目</a></li>
+                        <li class="nav-item"><a href="#methods">買取方法</a></li>
+                        <li class="nav-item"><a href="#stores">店舗一覧</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="mobile-header-inner">
+            <a href="/" class="header-logo">
+                <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382a2e383bce38388e3839ce383bce38389-1.png" alt="Safari">
+            </a>
+            <div class="mobile-header-controls">
+                <div class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section (Full Width Fixed) -->
+    <section class="hero fade-up">
+        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/webtop.png" alt="Safari 買取サービス" class="hero-banner-img">
+    </section>
+
+    <!-- News -->
+    <section class="section-news">
+        <div class="container">
+            <div class="news-header fade-up">
+                <h2 class="news-heading">Safari News</h2>
+                <a href="#" style="font-size:14px; color:var(--c-navy); font-weight:bold;">お知らせ一覧 <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="news-list fade-up">
+                <div class="news-item">
+                    <span class="news-date en">2026.11.17</span>
+                    <span class="news-cat">お知らせ</span>
+                    <a href="#" class="news-link">「Safari」ブランド刷新と店舗統一のお知らせ</a>
+                </div>
+                <div class="news-item">
+                    <span class="news-date en">2026.10.01</span>
+                    <span class="news-cat">お知らせ</span>
+                    <a href="#" class="news-link">特別コラボCM放送開始のお知らせ</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Loop (2-Row Restored) -->
+    <section class="section-events">
+        <div class="container">
+            <h2><span>＼ 全国1000店舗でイベント開催中 ／</span></h2>
+        </div>
+        
+        <!-- Row 1: Left Flow -->
+        <div class="scroll-wrapper">
+            <div class="scroll-track animate-left">
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-19-12.00.55.png" alt="Event 1"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771468765348.png" alt="Event 2"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771466249183.png" alt="Event 3"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771470992979.png" alt="Event 4"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771467303739.png" alt="Event 5"></div>
+                <!-- Duplicate for loop -->
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-19-12.00.55.png" alt="Event 1"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771468765348.png" alt="Event 2"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771466249183.png" alt="Event 3"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771470992979.png" alt="Event 4"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771467303739.png" alt="Event 5"></div>
+            </div>
+        </div>
+        
+        <!-- Row 2: Right Flow -->
+        <div class="scroll-wrapper">
+             <div class="scroll-track animate-right">
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771471469819.png" alt="Event 6"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771467951543.png" alt="Event 7"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771467059073.png" alt="Event 8"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-19-13.11.33.png" alt="Event 9"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771469837846.png" alt="Event 10"></div>
+                <!-- Duplicate for loop -->
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771471469819.png" alt="Event 6"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771467951543.png" alt="Event 7"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771467059073.png" alt="Event 8"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-19-13.11.33.png" alt="Event 9"></div>
+                <div class="scroll-item"><img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771469837846.png" alt="Event 10"></div>
+             </div>
+        </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="section-problem">
+        <div class="container">
+            <h2 class="problem-title">買取店はいっぱいあるけど…<br>どこで売ろうか、困ってませんか？</h2>
+            
+            <div class="problem-grid">
+                <div class="problem-content">
+                    <p class="problem-desc">
+                        Safariは全国で買取イベントを開催しているため、常に各地に査定士がスタンバイしています。独自のネットワークにより、遠方エリアでも出張費0円を実現。全国どこでも、安心・納得の買取体験をご提供します。
+                    </p>
+                    <a href="#" class="btn-problem">
+                        出張査定を申し込む <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="problem-map">
+                    <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/map.png" alt="全国出張査定エリアマップ">
+                    <div class="map-legend">
+                         <div class="legend-item"><span class="legend-box active"></span> 開催エリア</div>
+                         <div class="legend-item"><span class="legend-box inactive"></span> 非開催エリア</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stores -->
+    <section class="section-stores" id="stores">
+        <div class="container">
+            <div class="section-title fade-up">
+                <span class="sub"><span>SHOP</span></span>
+                <h2>店舗一覧</h2>
+            </div>
+            <div class="stores-grid fade-up">
+                <div class="store-card">
+                    <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-13-17.11.15.png" alt="ピアゴ阿倉川店" class="store-img">
+                    <div class="store-info">
+                        <h3 class="store-name">ピアゴ阿倉川店</h3>
+                        <p class="store-address">〒510-0803<br>三重県四日市市阿倉川町15-27</p>
+                    </div>
+                </div>
+                <div class="store-card">
+                    <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-13-17.11.31.png" alt="マックスバリュ伊豆長岡店" class="store-img">
+                    <div class="store-info">
+                        <h3 class="store-name">マックスバリュ伊豆長岡店</h3>
+                        <p class="store-address">〒410-2201<br>静岡県伊豆の国市古奈432</p>
+                    </div>
+                </div>
+                <div class="store-card">
+                    <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-13-17.11.22.png" alt="イオンタウン佐野店" class="store-img">
+                    <div class="store-info">
+                        <h3 class="store-name">イオンタウン佐野店</h3>
+                        <p class="store-address">〒327-0831<br>栃木県佐野市浅沼町742</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Items -->
+    <section class="section-items" id="items">
+        <div class="container">
+            <div class="section-title fade-up">
+                <span class="sub"><span>ITEMS</span></span>
+                <h2>買取できるお品物一覧</h2>
+            </div>
+            <div class="items-grid fade-up">
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-shirt"></i></div><span class="item-name">着物買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-stamp"></i></div><span class="item-name">切手買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-coins"></i></div><span class="item-name">古銭買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-dragon"></i></div><span class="item-name">骨董品買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-record-vinyl"></i></div><span class="item-name">レコード買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-camera"></i></div><span class="item-name">カメラ買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-bag-shopping"></i></div><span class="item-name">ブランド品</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-gem"></i></div><span class="item-name">宝石買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-regular fa-clock"></i></div><span class="item-name">時計買取</span></a>
+                <a href="#" class="item-card"><div class="item-icon"><i class="fa-solid fa-wine-glass"></i></div><span class="item-name">お酒買取</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results (Centered Layout) -->
+    <section class="section-results">
+        <div class="container">
+            <div class="section-title fade-up">
+                <span class="sub"><span>RESULTS</span></span>
+                <h2>Safariの買取実績</h2>
+                <p style="margin-top:10px; font-weight: 500;">最新の買取相場で査定いたします。</p>
+            </div>
+            <div class="results-slider fade-up">
+                <div class="result-card">
+                    <div class="result-img">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771477073535.png" alt="ライカ カメラ">
+                    </div>
+                    <div class="result-body">
+                        <p class="result-title">ライカ カメラ</p>
+                        <div class="result-price">
+                            <span class="price-label">買取金額</span>
+                            <span class="price-val">474,500<span style="font-size:14px; font-weight:400; font-style:normal;">円</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-img">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771476851131.png" alt="着物">
+                    </div>
+                    <div class="result-body">
+                        <p class="result-title">本場大島紬を含む着物数点</p>
+                        <div class="result-price">
+                            <span class="price-label">買取金額</span>
+                            <span class="price-val">119,000<span style="font-size:14px; font-weight:400; font-style:normal;">円</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-card">
+                    <div class="result-img">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771476912260.png" alt="古銭">
+                    </div>
+                    <div class="result-body">
+                        <p class="result-title">大判、小判など複数の古銭</p>
+                        <div class="result-price">
+                            <span class="price-label">買取金額</span>
+                            <span class="price-val">733,000<span style="font-size:14px; font-weight:400; font-style:normal;">円</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="#" class="btn-outline">買取実績をもっと見る</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methods -->
+    <section class="section-methods" id="methods">
+        <div class="container">
+            <div class="section-title fade-up">
+                <span class="sub"><span>HOW TO SELL</span></span>
+                <h2>3つの買取方法</h2>
+            </div>
+            <div class="methods-grid fade-up">
+                <div class="method-card">
+                    <div class="method-img">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771478393350-1.png" alt="出張買取">
+                    </div>
+                    <h3 class="method-title">出張買取</h3>
+                    <p class="method-desc">品物の持ち運びなし。<br>プロの査定員が玄関先まで伺い、その場で査定・現金化。</p>
+                </div>
+                <div class="method-card">
+                    <div class="method-img">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-19-15.18.04.png" alt="催事買取">
+                    </div>
+                    <h3 class="method-title">催事買取</h3>
+                    <p class="method-desc">全国の特設会場で査定イベントを開催中。お買い物のついでに気軽にお立ち寄りいただけます。</p>
+                </div>
+                <div class="method-card">
+                    <div class="method-img">
+                        <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e696b0e8a68fe38397e383ade382b8e382a7e382afe38388_1771483831316.png" alt="店頭買取">
+                    </div>
+                    <h3 class="method-title">店頭買取</h3>
+                    <p class="method-desc">アクセス抜群の全店舗。いつものお買い物ついでに、気軽にご相談いただけます。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donation -->
+    <section class="section-donation">
+        <div class="container fade-up">
+            <div class="donation-grid">
+                <div class="donation-img">
+                    <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382b9e382afe383aae383bce383b3e382b7e383a7e38383e38388-2026-02-13-22.03.40.png" alt="寄付活動">
+                </div>
+                <div class="donation-content">
+                    <h2 class="donation-title">持続可能な未来への<br>コミットメント</h2>
+                    <p class="donation-text">
+                        私たちは売上の一部と、買い取った商品の一部をカンボジアの学校に寄付しています。リサイクルを通じて発展途上国の次世代を支援し続けています。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recruit Section (Documentary Style) -->
+    <section class="section-recruit">
+        <div class="container fade-up">
+            <div class="recruit-header">
+                <h2>Safari Documentary</h2>
+                <p>価値をつなぐ、私たちの日常。舞台裏をのぞいてみませんか？</p>
+            </div>
+            
+            <div class="recruit-doc-grid">
+                <div class="doc-card">
+                    <div class="doc-visual navy"><div class="doc-visual-text">Episode 01</div><div class="doc-play-btn"><i class="fa-solid fa-play"></i></div></div>
+                    <div class="doc-body"><span class="doc-tag">WORK LIFE</span><p class="doc-title">新人査定士の1日に完全同行！お客様の笑顔の理由とは？</p></div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-visual gold"><div class="doc-visual-text">Behind the Scenes</div><div class="doc-play-btn"><i class="fa-solid fa-play"></i></div></div>
+                    <div class="doc-body"><span class="doc-tag">TEAM</span><p class="doc-title">Safariの舞台裏｜休憩時間は笑いが絶えない？チームの絆</p></div>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-visual navy"><div class="doc-visual-text">Interview</div><div class="doc-play-btn"><i class="fa-solid fa-play"></i></div></div>
+                    <div class="doc-body"><span class="doc-tag">MESSAGE</span><p class="doc-title">「やりがいは無限大」ベテランスタッフが語る、買取の面白さ</p></div>
+                </div>
+            </div>
+
+            <a href="#" class="btn-recruit-cta">
+                採用詳細を見る <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        </div>
+    </section>
+    
+    <!-- Facility CTA -->
+    <div class="facility-cta-container">
+        <div class="facility-cta-box fade-up">
+            <div class="facility-bg">
+                 <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e4bc81e6a5ade383ade382b4.png" alt="施設募集">
+                 <div class="facility-overlay"></div>
+            </div>
+            <div class="facility-content">
+                <div class="facility-cta-header">
+                    <i class="fa-solid fa-handshake"></i> 開催施設様 募集中
+                </div>
+                <p class="facility-cta-desc">
+                    空きスペースを有効活用しませんか？集客効果抜群の買取イベントを開催いただけます。
+                </p>
+            </div>
+            <a href="#" class="btn-facility">お問い合わせ <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container text-center">
+            <img src="https://yutani8013f70550-cmqpt.wordpress.com/wp-content/uploads/2026/02/e382a2e383bce38388e3839ce383bce38389-1.png" alt="Safari" style="height:40px; filter:brightness(0) invert(1); margin-bottom: 20px;">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Safari Buyout Service. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Float CTA -->
+    <div class="mobile-cta">
+        <a href="tel:0120161102" class="cta-btn-sp tel"><i class="fa-solid fa-phone"></i> 電話相談</a>
+        <a href="#" class="cta-btn-sp web"><i class="fa-solid fa-envelope"></i> メール査定</a>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const observerOptions = { root: null, rootMargin: '0px 0px -50px 0px', threshold: 0.1 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+        const header = document.querySelector('.site-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 5px 20px rgba(0,0,0,0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
